@@ -1,36 +1,54 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const EventShema = new Schema({
+const enumLocation = ["Inside the Hall", "Outside the Hall"];
+const enumType = ["Party", "Wedding", "Bar/Bat Mitzvah"];
 
-    event_name : {
+const EventSchema = new Schema({
+    name: {
         type: String,
         required: true
     },
-    event_date : {
+    date: {
         type: Date,
         required: true
     },
-    event_location : {
+    location: {
         type: String,
-        enum: ["inside the hall", "outside the hall"]
+        enum: enumLocation,
+        required: true
     },
-
-    type : {
+    type: {
         type: String,
-        enum: ["Party", "wedding","batORbar mitzvah"]
+        enum: enumType,
+        required: true
     },
-    Notes : { 
+    notes: {
         type: String,
-        maxlength : 500
+        maxlength: 500,
     },
 });
 
+EventSchema.methods.enumRequest = async function (enumRequest) {
+    if (enumRequest == "location") {
+        return enumLocation;
+    }
+    else if (enumRequest == "type") {
+        return enumType;
+    }
+    return "No data.";
+};
 
+// בדיקת תאריך פנוי לאירוע
+EventSchema.statics.validDate = async function (yourDate) {
+    const findEvent = await EventData.findOne({ date: yourDate });
+    if (findEvent) {
+        console.log('התאריך כבר קיים במסד הנתונים');
+    } else {
+        console.log('התאריך פנוי');
+    }
+};
 
-/*const existingEvent = await EventData.findOne({ event_date: yourDate });
-if (existingEvent) {
-    console.log('התאריך כבר קיים במסד הנתונים');
-} else {
-    console.log('התאריך פנוי');
-}*/
+const EventData = mongoose.model('Event', EventSchema);
+
+module.exports = EventData;

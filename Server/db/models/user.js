@@ -1,5 +1,10 @@
+
 const mongoose = require('mongoose');
+
 const bcrypt = require('bcryptjs');
+
+const jwt = require('jsonwebtoken');
+
 //const validator = require('validator');
 const Schema = mongoose.Schema;
 
@@ -12,8 +17,8 @@ const userSchema = new Schema({
         required: true,
         // שערך השדה חייב להיות ייחודי במסד הנתוניםו על מנת למנוע כפיליות 
         unique: true
-    }, 
-    password:{
+    },
+    password: {
         type: String,
         required: true,
         trim: true,
@@ -47,8 +52,24 @@ const userSchema = new Schema({
         }*/
     },
 
-    
+
 });
+
+//token פונקציה לייצרת
+userSchema.methods.generateToken = async function () {
+    const user = this;
+
+    let data = {
+        signInTime: Date.now(),
+        _id: user._id,
+        username: user.username
+    }
+    const token = jwt.sign(data, process.env.GLOBAL_TOKEN_SECRET, { expiresIn: '1 hour' }); //1800s - 30 minutes
+
+    //const token = jwt.sign({ _id: user._id }, 'H57gd1!@$nsdaf32487sd', { expiresIn: '1 hour' });
+    //user.tokens.push({ token }); //הוספה למערך במקום האחרון
+    return token;
+}
 
 /*
 userSchema.pre('save', async function(next) 

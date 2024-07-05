@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Menu from './menu'; // make sure the path is correct
+import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 
 const MainContent = styled.div`
@@ -8,7 +8,7 @@ const MainContent = styled.div`
 // על מנת לשנות משתנים 
 function PrintAll() {
   const [data, setData] = useState(null);
-//
+  //
   useEffect(() => {
     fetch('http://localhost:5000/user/printall') // replace with your API endpoint
       .then(response => response.json())//jsonל apiממיר את המידע שהתקבל מ
@@ -22,7 +22,7 @@ function PrintAll() {
 
   return (
     <div>
-      <Menu /> {/* Here's your NavBar component */} 
+      <Menu /> {/* Here's your NavBar component */}
       <MainContent>
         {/* Render your data here */}
         {data.map((item, index) => (

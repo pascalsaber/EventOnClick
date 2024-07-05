@@ -10,6 +10,7 @@ const bodyParser = require('body-parser'); //חובה עבור POST
 const bcrypt = require('bcryptjs');
 
 const UserRouter = require('../routers/user_Router');
+const EventRouter = require('../routers/event_Router');
 
 //תבנית התחברות לבסיס הנתונים
 mongoose.connect('mongodb://localhost:27017/EventOnClick'); //חיבור לבסיס הנתונים
@@ -51,3 +52,4 @@ app.listen(port, () => {
 // REQUEST תועבר כ 
 // על פי הקישור אליו פונים
 app.use('/user', UserRouter);
+app.use('/event', EventRouter);

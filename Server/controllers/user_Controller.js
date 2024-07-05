@@ -1,30 +1,23 @@
+
 const User = require("../db/models/user.js");
 const bcrypt = require('bcryptjs');
 
 exports.add = async (request, result) => {
     try {
-        // מידע שמתקבל בפניה
-        const req_username = request.query.username;
-        const req_password = request.query.password;
-        // salt - יכיל מחרוזת אקראית 
-        const salt = bcrypt.genSaltSync(10);
-        // hash - את ההסיסמה המוצפנת שיש בתוכה את השילוב של הסימה המקורית והמחרוזת ההקראית שהמערכת יצרה
-        const hash = bcrypt.hashSync(req_password, salt);
-        request.query.password = hash;
+        const newUser = new User(request.query); //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
+        
+        const username_taken = await User.findOne({ username: newUser.username });
+        if (username_taken) {
+            return result.status(404).send('Username is taken.');
+        }
 
-        const newUser = new User(request.query);
-        /*
-        const newUser = new User({
-            // איחסון באובייקט
-            username: req_username,
-            password: hash
-        });*/
+        const salt = bcrypt.genSaltSync(10); //מחרוזת אקראית בגודל 10 טווים עבור ההצפנה
+        // hash - את ההסיסמה המוצפנת שיש בתוכה את השילוב של הסימה המקורית והמחרוזת ההקראית שהמערכת יצרה
+        const hashPassword = bcrypt.hashSync(newUser.password, salt);
+        newUser.password = hashPassword;
 
         const process = await newUser.save();
-        // עשיתי ניסוי להצגת האי די היחודי של המשתנה שלי 
-        //const id=process._id;
-        // וגם הצלחתי להציג אותו 
-        //result.send(id);
+        
         result.send(process);
     } catch (error) {
         result.status(500).send(error.message);
@@ -45,20 +38,38 @@ exports.login = async (request, result) => {
 
         const data = await User.findOne({ username: req_username });
         if (!data) {
-            return result.status(404).send('No data');
+            return result.status(401).send('Wrong username.'); //throw new Error
         }
         // אחרי ההשוואה בין הסיסמה שהמשתמש נתן לבין הסיסמה שנמצאת בסיס נתונים   
         const isValid = bcrypt.compareSync(req_password, data.password);
-        if (isValid) {
-            result.send(data);
-        } else {
-            //throw new Error("Password mismatch");
-            return result.status(500).send('Wrong password.');
+        if (!isValid) {
+            return result.status(401).send('Wrong password.'); //throw new Error
         }
+        let token = await data.generateToken();
+        result.send({ token, data });
     } catch (error) {
         result.status(500).send('[Error] [#0010] ' + error.message);
     }
 }
+
+exports.profile = async (request, result) => {
+    const jwt = require('jsonwebtoken');
+    try {
+        const token = request.headers.authorization.split(' ')[1]; // Extract token from header
+        const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
+
+        const data = await User.findOne({ _id: decoded._id });
+        if (!data) {
+            return result.status(401).send('No such ID in the database.'); //throw new Error
+        }
+
+        // Handle the verified data (e.g., user ID)
+        result.json({ decoded, data });
+    } catch (error) {
+        result.status(401).json({ message: 'Invalid token' });
+    }
+}
+
 exports.updateUserByID = async (request, result) => {
     try {
         const req_id = request.query.id;
@@ -88,4 +99,16 @@ exports.findUserByID = async (request, result) => {
         result.status(500).send(error.message);
     }
 }
+exports.test = async (request, result) => {
+    try {
+        const data = request.query.test;
 
+        if (!data) {
+            return result.status(404).send('No data');
+        }
+
+        result.send(data);
+    } catch (error) {
+        result.status(500).send(error.message);
+    }
+}
