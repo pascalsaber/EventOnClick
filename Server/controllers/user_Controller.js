@@ -2,14 +2,17 @@
 const User = require("../db/models/user.js");
 const bcrypt = require('bcryptjs');
 
-exports.add = async (request, result) => {
+exports.register = async (request, result) => {
     try {
-        const newUser = new User(request.query); //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
-        
+        const newUser = new User(request.body); //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
+
         const username_taken = await User.findOne({ username: newUser.username });
-        if (username_taken) {
+        if (username_taken)
             return result.status(404).send('Username is taken.');
-        }
+
+        let isStrongPassword = await newUser.isStrongPassword(); //MUST USE AWAIT!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        if (isStrongPassword == false)
+            return result.status(404).send('Password is not strong.');
 
         const salt = bcrypt.genSaltSync(10); //מחרוזת אקראית בגודל 10 טווים עבור ההצפנה
         // hash - את ההסיסמה המוצפנת שיש בתוכה את השילוב של הסימה המקורית והמחרוזת ההקראית שהמערכת יצרה
@@ -17,7 +20,7 @@ exports.add = async (request, result) => {
         newUser.password = hashPassword;
 
         const process = await newUser.save();
-        
+
         result.send(process);
     } catch (error) {
         result.status(500).send(error.message);

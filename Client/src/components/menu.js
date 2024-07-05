@@ -26,9 +26,9 @@ const NavLink = styled.a`
 function NavBar() {
   return (
     <Nav>
+      <NavLink href="/register">Register</NavLink>
       <NavLink href="/login">Login</NavLink>
       <NavLink href="/profile">Profile</NavLink>
-      <NavLink href="/addUser">addUser</NavLink>
       <NavLink href="/printall">Get Users</NavLink>
       <NavLink href="/findUserByID">findUserByID</NavLink>
       <NavLink href="/update">Update</NavLink>

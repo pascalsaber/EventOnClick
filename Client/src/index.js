@@ -11,19 +11,19 @@ import {
 import "./styles.css";
 
 // Components
+import Register from './components/User/Register'
 import PrintAll from './components/temp/printall'
 import FindUserByID from './components/temp/findUserByID'
-import AddUser from './components/temp/addUser'
 import Test from './components/temp/test'
-import Login from './components/login'
-import Profile from './components/Profile'
+import Login from './components/User/login'
+import Profile from './components/User/Profile'
 import AddEvent from './components/addEvent'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="" element={<PrintAll />} />
-      <Route path="/addUser" element={<AddUser />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/printall" element={<PrintAll />} />
       <Route path="/findUserByID" element={<FindUserByID />} />
       <Route path="/test" element={<Test />} />

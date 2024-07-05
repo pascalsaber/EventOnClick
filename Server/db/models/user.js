@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 
 const jwt = require('jsonwebtoken');
 
-//const validator = require('validator');
+const validator = require('validator');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
@@ -22,7 +22,6 @@ const userSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        minLength: 8
     },
     firstName: {
         type: String,
@@ -46,10 +45,10 @@ const userSchema = new Schema({
         type: String,
         required: true,
         trim: true,
-        /*validate(value) {
+        validate(value) {
             if (!validator.isEmail(value))
                 throw new Error(`Invalid email format: ${value}`);
-        }*/
+        }
     },
 
 
@@ -61,14 +60,22 @@ userSchema.methods.generateToken = async function () {
 
     let data = {
         signInTime: Date.now(),
-        _id: user._id,
-        username: user.username
+        _id: this._id,
+        username: this.username
     }
     const token = jwt.sign(data, process.env.GLOBAL_TOKEN_SECRET, { expiresIn: '1 hour' }); //1800s - 30 minutes
 
     //const token = jwt.sign({ _id: user._id }, 'H57gd1!@$nsdaf32487sd', { expiresIn: '1 hour' });
     //user.tokens.push({ token }); //הוספה למערך במקום האחרון
     return token;
+}
+
+userSchema.methods.isStrongPassword = async function () {
+    const user = this;
+    if (validator.isStrongPassword(user.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }))
+        return true;
+    else
+        return false;
 }
 
 /*

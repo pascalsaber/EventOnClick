@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Menu from './menu'; // make sure the path is correct
+import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 
 const MainContent = styled.div`
@@ -37,7 +37,7 @@ function Profile() {
                 const result = await fetchResponse.json();
                 setStatus(`${fetchResponse.status}`);
                 setResponse("Success");
-                setData([result.data]);
+                setData([result]);
             } catch (error) {
                 console.error(error);
             }

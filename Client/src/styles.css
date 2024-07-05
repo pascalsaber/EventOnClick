@@ -33,7 +33,8 @@ td {
   padding: 20px;
 }
 
-.form input[type=text],
+.form input,
+input[type=text],
 input[type=date],
 select {
   width: 100%;
