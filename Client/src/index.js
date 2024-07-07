@@ -12,7 +12,7 @@ import "./styles.css";
 
 // User Components
 import Register from './components/User/Register'
-import Login from './components/User/login'
+import Login from './components/User/Login'
 import Logoff from './components/User/Logoff'
 import Profile from './components/User/Profile'
 
@@ -23,6 +23,7 @@ import Test from './components/temp/test'
 
 // Event Components
 import AddEvent from './components/addEvent'
+import AllEvents from "./components/User/AllEvents";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="/findUserByID" element={<FindUserByID />} />
       <Route path="/test" element={<Test />} />
       <Route path="/addEvent" element={<AddEvent />} />
+      <Route path="/allEvents" element={<AllEvents />} />
     </>
   )
 );

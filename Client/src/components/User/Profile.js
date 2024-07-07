@@ -11,7 +11,7 @@ function Profile() {
     const [data, setData] = useState(null);
     const [inputs, setInputs] = useState({});
     const [status, setStatus] = useState("");
-    const [response, setResponse] = useState("");
+    const [message, setMessage] = useState("");
 
     useEffect(() => {
         async function fetchData() {
@@ -27,17 +27,16 @@ function Profile() {
                     headers: myHeaders
                 });
 
+                setStatus(`${fetchResponse.status}`);
                 if (!fetchResponse.ok) {
-                    setStatus(`${response.status}`);
                     let responseText = await fetchResponse.text();
-                    setResponse(responseText);
+                    setMessage(responseText);
                     throw new Error(`[Error] Status: ${fetchResponse.status} Response: ${responseText}`);
                 }
 
-                const result = await fetchResponse.json();
-                setStatus(`${fetchResponse.status}`);
-                setResponse("Success");
-                setData([result]);
+                const dataJSON = await fetchResponse.json();
+                setMessage("Success");
+                setData([dataJSON]);
             } catch (error) {
                 console.error(error);
             }
@@ -53,7 +52,7 @@ function Profile() {
             <MainContent>
                 <div>
                     <p>[STATUS] {status}</p>
-                    <p>[RESPONSE] {response}</p>
+                    <p>[RESPONSE] {message}</p>
                     <p>[JSON] {JSON.stringify(data)}</p>
                 </div>        
                 {data ? data.map((item, index) => (

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from './menu'; // make sure the path is correct
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -8,16 +9,23 @@ const MainContent = styled.div`
 `;
 
 function AddEvent() {
+    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); //עבור הודעה שיצרנו שמתקבלת בפניה לשרת
 
-    let [enumLocationList, setEnumLocationList] = useState([{ value: "", label: "Error Loading from Database..." }])
-    let [enumTypeList, setEnumTypeList] = useState([{ value: "", label: "Error Loading from Database..." }])
+    const [enumLocationList, setEnumLocationList] = useState([{ value: "", label: "Error Loading from Database..." }])
+    const [enumTypeList, setEnumTypeList] = useState([{ value: "", label: "Error Loading from Database..." }])
 
 
     useEffect(() => {
+        function checkLogin() {
+            const token = localStorage.getItem('jwt-token');
+            if (!token)
+                navigate("/login");
+        }
         async function fetch_enum(enumRequest) {
             const fetchResponse = await fetch(`http://localhost:5000/event/enumRequest?enumRequest=${enumRequest}`);
             if (fetchResponse.ok) {
@@ -35,7 +43,7 @@ function AddEvent() {
                     setEnumTypeList(list);
             }
         }
-
+        checkLogin();
         fetch_enum("location");
         fetch_enum("type");
     }, []); // Empty array means this effect runs once on mount
@@ -49,10 +57,12 @@ function AddEvent() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            const response = await fetch("http://localhost:5000/event/add", {
+            const token = localStorage.getItem('jwt-token');
+            const fetchResponse = await fetch("http://localhost:5000/event/add", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
                 },
                 body: JSON.stringify({
                     name: inputs.name,
@@ -64,14 +74,14 @@ function AddEvent() {
             });
 
             setData(null);
-            setStatus(`${response.status}`);
-            if (!response.ok) {
-                let message = await response.text();
-                setMessage(message);
-                throw new Error(`[Error] Status: ${response.status} Message: ${message}`);
+            setStatus(`${fetchResponse.status}`);
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
 
-            const dataJSON = await response.json();
+            const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
         } catch (error) {
@@ -83,6 +93,7 @@ function AddEvent() {
         <div>
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
+                <br></br>
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <label>Name</label>
                     <input
@@ -90,7 +101,6 @@ function AddEvent() {
                         name="name"
                         value={inputs.name || ""}
                         onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
                     />
                     <label>Date</label>
                     <input
@@ -98,18 +108,17 @@ function AddEvent() {
                         name="date"
                         value={inputs.date || ""}
                         onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
                     />
                     <label>Location</label>
-                    <select name="location" value={inputs.location} onChange={handleChange} style={{ marginLeft: '10px' }}>
-                        {enumLocationList.map((option) => (
-                            <option value={option.value}>{option.label}</option>
+                    <select name="location" value={inputs.location} onChange={handleChange}>
+                        {enumLocationList.map((item) => (
+                            <option value={item.value}>{item.label}</option>
                         ))}
                     </select>
                     <label>Type</label>
-                    <select name="type" value={inputs.type} onChange={handleChange} style={{ marginLeft: '10px' }}>
-                        {enumTypeList.map((option) => (
-                            <option value={option.value}>{option.label}</option>
+                    <select name="type" value={inputs.type} onChange={handleChange}>
+                        {enumTypeList.map((item) => (
+                            <option value={item.value}>{item.label}</option>
                         ))}
                     </select>
                     <label>Notes</label>
@@ -118,7 +127,6 @@ function AddEvent() {
                         name="notes"
                         value={inputs.notes || ""}
                         onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
                     />
                     <input type="submit" value="Login" />
                     <div>
@@ -128,41 +136,9 @@ function AddEvent() {
                         <p>{JSON.stringify(enumLocationList)}</p>
                     </div>
                 </form>
-
-                {/*data !== null && data.map((item, index) => (
-                    item.name === inputs.name ? <div style={{ color: 'green' }}>Found user with this name!</div> : <div style={{ color: 'red' }}>Not the user!</div>
-                ))*/}
-                {data ? data.map((item, index) => (
-                    <form>
-                        <table style={{ width: '100%' }}>
-                            <tr>
-                                <td style={{ width: "100px" }} >Index: {index}</td>
-                                <td style={{ width: "100px" }} >ID: {item._id}</td>
-                                <td style={{ width: "100px" }}>event_name: {item.event_name}</td>
-                                <td style={{ width: "100px" }}>event_location: {item.event_location}</td>
-                                <td style={{ width: "100px" }}>type: {item.type}</td>
-                                <td style={{ width: "100px" }}>Notes: {item.Notes}</td>
-                            </tr>
-                        </table>
-                    </form>
-                )) : <p>Loading...</p>
-                }
             </MainContent>
         </div>
     );
 }
-
-// Example 
-/* const Select = ({ label, value, options, onChange }) => {
-    return (
-        <label>
-            <select style={{ marginLeft: '10px' }} value={value} onChange={onChange}>
-                {options.map((option) => (
-                    <option value={option.value}>{option.label}</option>
-                ))}
-            </select>
-        </label>
-    );
-};*/
 
 export default AddEvent;

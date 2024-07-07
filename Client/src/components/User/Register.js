@@ -22,7 +22,7 @@ function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            const response = await fetch("http://localhost:5000/user/register", {
+            const fetchResponse = await fetch("http://localhost:5000/user/register", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -38,14 +38,14 @@ function Register() {
             });
 
             setData(null);
-            setStatus(`${response.status}`);
-            if (!response.ok) {
-                let message = await response.text();
-                setMessage(message);
-                throw new Error(`[Error] Status: ${response.status} Message: ${message}`);
+            setStatus(`${fetchResponse.status}`);
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
 
-            const dataJSON = await response.json();
+            const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
         } catch (error) {

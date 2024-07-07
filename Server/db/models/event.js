@@ -5,6 +5,11 @@ const enumLocation = ["Inside the Hall", "Outside the Hall"];
 const enumType = ["Party", "Wedding", "Bar/Bat Mitzvah"];
 
 const EventSchema = new Schema({
+    userID: {
+        type: Schema.Types.ObjectId,
+        ref: 'User', //"Users" table in MongoDB
+        required: true
+    },
     name: {
         type: String,
         required: true
@@ -26,17 +31,33 @@ const EventSchema = new Schema({
     notes: {
         type: String,
         maxlength: 500,
-    },
-    user: { type: Schema.Types.ObjectId, ref: 'User' }
+    }
 });
 
+/*
+userSchema.methods.assignUserToEvent = async function (thisUser, thisEvent) {
+    try {
+        const user = await user.findById(thisUser._id);
+        const event = await event.findById(thisEvent._id);
+
+        if (!user || !event) {
+            console.log('user or event not found.');
+            return;
+        }
+        // הוסף את הסטודנט למערך של הקורס
+        event.users.push(user);
+        await event.save();
+        console.log(`User ${thisUser.firstName} ${thisUser.lastName} assigned to course ${thisEvent.name}.`);
+    } catch (error) {
+        console.error('Error assigning user to event:', error.message);
+    }
+}*/
+
 EventSchema.methods.enumRequest = async function (enumRequest) {
-    if (enumRequest == "location") {
+    if (enumRequest == "location")
         return enumLocation;
-    }
-    else if (enumRequest == "type") {
+    else if (enumRequest == "type")
         return enumType;
-    }
     return "No data.";
 };
 

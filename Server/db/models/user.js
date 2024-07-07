@@ -48,8 +48,7 @@ const userSchema = new Schema({
                 throw new Error(`Invalid email format: ${value}`);
         }
     },
-    events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
-
+    //events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
 });
 
 //token פונקציה לייצרת
@@ -76,25 +75,6 @@ userSchema.methods.isStrongPassword = async function () {
         return false;
 }
 
-userSchema.methods.assignUserToEvent = async function (thisUser, thisEvent) {
-    try {
-        const user = await user.findById(thisUser._id);
-        const event = await event.findById(thisEvent._id);
-
-        if (!user || !event) {
-            console.log('user or event not found.');
-            return;
-        }
-
-        // הוסף את הסטודנט למערך של הקורס
-        event.users.push(user);
-        await event.save();
-
-        console.log(`User ${thisUser.firstName} ${thisUser.lastName} assigned to course ${thisEvent.name}.`);
-    } catch (error) {
-        console.error('Error assigning user to event:', error.message);
-    }
-}
 
 /*
 userSchema.pre('save', async function(next) 

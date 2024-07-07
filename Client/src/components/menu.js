@@ -1,5 +1,4 @@
 // NavBar.js
-
 import React from 'react';
 import styled from 'styled-components';
 
@@ -32,6 +31,7 @@ function NavBar() {
         <>
           <NavLink href="/profile">Profile</NavLink>
           <NavLink href="/addEvent">Add Event</NavLink>
+          <NavLink href="/allEvents">All Events</NavLink>
           <NavLink href="/logoff">Logoff</NavLink>
         </>
         :

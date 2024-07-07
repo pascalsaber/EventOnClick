@@ -1,6 +1,7 @@
 
 const User = require("../db/models/user.js");
 const bcrypt = require('bcryptjs');
+const Event = require("../db/models/event.js");
 
 exports.register = async (request, result) => {
     try {
@@ -19,9 +20,8 @@ exports.register = async (request, result) => {
         const hashPassword = bcrypt.hashSync(newUser.password, salt);
         newUser.password = hashPassword;
 
-        const process = await newUser.save();
-
-        result.send(process);
+        const progress = await newUser.save();
+        result.send(progress);
     } catch (error) {
         result.status(500).send(error.message);
     }
@@ -49,7 +49,7 @@ exports.login = async (request, result) => {
             return result.status(401).send('Wrong password.'); //throw new Error
         }
         let token = await data.generateToken();
-        result.send({ token, data });
+        result.send({ token });
     } catch (error) {
         result.status(500).send('[Error] [#0010] ' + error.message);
     }

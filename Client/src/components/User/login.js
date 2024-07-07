@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'; 
+import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
@@ -25,28 +25,27 @@ function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            const response = await fetch("http://localhost:5000/user/login", {
+            //העברת מידע מהטופס לשרת בצורת גסון
+            const fetchResponse = await fetch("http://localhost:5000/user/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
                     username: inputs.username,
                     password: inputs.password
                 })
             });
 
-            setData(null);
-            setStatus(`${response.status}`);
-            if (!response.ok) {
-                let message = await response.text();
-                setMessage(message);
-                throw new Error(`[Error] Status: ${response.status} Message: ${message}`);
+            setData(null);//TEMP
+            setStatus(`${fetchResponse.status}`);
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
 
-            const dataJSON = await response.json();
-            setMessage("Success");
-            setData([dataJSON.data]);
+            const dataJSON = await fetchResponse.json(); //TEMP
+            setMessage("Success"); //TEMP
+            setData([dataJSON.data]); //TEMP
             localStorage.setItem("jwt-token", dataJSON.token);
             navigate("/profile");
         } catch (error) {
@@ -80,15 +79,14 @@ function Login() {
                     <div>
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
-                        <p>[JSON] {JSON.stringify(data)}</p>
+                        <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
                     </div>
                 </form>
-
 
                 {/*data !== null && data.map((item, index) => (
                     item.name === inputs.name ? <div style={{ color: 'green' }}>Found user with this name!</div> : <div style={{ color: 'red' }}>Not the user!</div>
                 ))*/}
-                {data ? data.map((item, index) => (
+                {/*data ? data.map((item, index) => (
                     <form>
                         <table style={{ width: '100%' }}>
                             <tr>
@@ -103,10 +101,23 @@ function Login() {
                         </table>
                     </form>
                 )) : <p>Loading...</p>
-                }
+                */}
             </MainContent>
         </div >
     );
 }
+
+// Example 
+/* const Select = ({ label, value, options, onChange }) => {
+    return (
+        <label>
+            <select style={{ marginLeft: '10px' }} value={value} onChange={onChange}>
+                {options.map((option) => (
+                    <option value={option.value}>{option.label}</option>
+                ))}
+            </select>
+        </label>
+    );
+};*/
 
 export default Login;
