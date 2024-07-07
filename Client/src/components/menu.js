@@ -24,14 +24,30 @@ const NavLink = styled.a`
 `;
 
 function NavBar() {
+  const token = localStorage.getItem('jwt-token');
+  const admin = true;
   return (
     <Nav>
-      <NavLink href="/register">Register</NavLink>
-      <NavLink href="/login">Login</NavLink>
-      <NavLink href="/profile">Profile</NavLink>
-      <NavLink href="/printall">Get Users</NavLink>
-      <NavLink href="/findUserByID">findUserByID</NavLink>
-      <NavLink href="/update">Update</NavLink>
+      {token ?
+        <>
+          <NavLink href="/profile">Profile</NavLink>
+          <NavLink href="/addEvent">Add Event</NavLink>
+          <NavLink href="/logoff">Logoff</NavLink>
+        </>
+        :
+        <>
+          <NavLink href="/register">Register</NavLink>
+          <NavLink href="/login">Login</NavLink>
+        </>
+      }
+      {token && admin ?
+        <>
+          <h1>Admin</h1>
+          <NavLink href="/printall">Get Users</NavLink>
+          <NavLink href="/findUserByID">findUserByID</NavLink>
+          <NavLink href="/update">Update</NavLink>
+        </>
+        : null}
     </Nav>
   );
 }
