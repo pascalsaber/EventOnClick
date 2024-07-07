@@ -27,6 +27,7 @@ const EventSchema = new Schema({
         type: String,
         maxlength: 500,
     },
+    user: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
 EventSchema.methods.enumRequest = async function (enumRequest) {
