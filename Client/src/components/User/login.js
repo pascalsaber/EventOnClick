@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -12,6 +13,8 @@ function Login() {
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); //עבור הודעה שיצרנו שמתקבלת בפניה לשרת
+
+    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
     const handleChange = (event) => {
         const name = event.target.name;
@@ -45,6 +48,7 @@ function Login() {
             setMessage("Success");
             setData([dataJSON.data]);
             localStorage.setItem("jwt-token", dataJSON.token);
+            navigate("/profile");
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }

@@ -10,25 +10,32 @@ import {
 } from "react-router-dom";
 import "./styles.css";
 
-// Components
+// User Components
 import Register from './components/User/Register'
+import Login from './components/User/login'
+import Logoff from './components/User/Logoff'
+import Profile from './components/User/Profile'
+
+// Admin Components
 import PrintAll from './components/temp/printall'
 import FindUserByID from './components/temp/findUserByID'
 import Test from './components/temp/test'
-import Login from './components/User/login'
-import Profile from './components/User/Profile'
+
+// Event Components
 import AddEvent from './components/addEvent'
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
-      <Route path="" element={<PrintAll />} />
+      <Route path="" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/logoff" element={<Logoff />} />
+      <Route path="/profile" element={<Profile />} />
+      <Route path="/logoff" element={<Profile />} />
       <Route path="/printall" element={<PrintAll />} />
       <Route path="/findUserByID" element={<FindUserByID />} />
       <Route path="/test" element={<Test />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/profile" element={<Profile />} />
       <Route path="/addEvent" element={<AddEvent />} />
     </>
   )
