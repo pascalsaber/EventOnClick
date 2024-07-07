@@ -25,12 +25,13 @@ const NavLink = styled.a`
 
 function NavBar() {
   const token = localStorage.getItem('jwt-token');
-  const admin = false;
+  const admin = true;
   return (
     <Nav>
       {token ?
         <>
           <NavLink href="/profile">Profile</NavLink>
+          <NavLink href="/addEvent">Add Event</NavLink>
           <NavLink href="/logoff">Logoff</NavLink>
         </>
         :
@@ -39,8 +40,9 @@ function NavBar() {
           <NavLink href="/login">Login</NavLink>
         </>
       }
-      {admin ?
+      {token && admin ?
         <>
+          <h1>Admin</h1>
           <NavLink href="/printall">Get Users</NavLink>
           <NavLink href="/findUserByID">findUserByID</NavLink>
           <NavLink href="/update">Update</NavLink>
