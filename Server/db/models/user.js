@@ -1,14 +1,10 @@
 
 const mongoose = require('mongoose');
-
 const bcrypt = require('bcryptjs');
-
 const jwt = require('jsonwebtoken');
-
 const validator = require('validator');
 const event = require('./event.js')
 const Schema = mongoose.Schema;
-
 
 const userSchema = new Schema({
     username: {
@@ -79,7 +75,8 @@ userSchema.methods.isStrongPassword = async function () {
     else
         return false;
 }
-userSchema.methods.assignUserToEvent= async function (thisUser,thisEvent) {
+
+userSchema.methods.assignUserToEvent = async function (thisUser, thisEvent) {
     try {
         const user = await user.findById(thisUser._id);
         const event = await event.findById(thisEvent._id);
@@ -97,9 +94,7 @@ userSchema.methods.assignUserToEvent= async function (thisUser,thisEvent) {
     } catch (error) {
         console.error('Error assigning user to event:', error.message);
     }
-    
 }
-
 
 /*
 userSchema.pre('save', async function(next) 
