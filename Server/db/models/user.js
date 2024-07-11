@@ -67,6 +67,11 @@ userSchema.methods.generateToken = async function () {
     return token;
 }
 
+// minLength:8 מינימום 8 תויים
+// minLowercase: 1 מינימום אות 1 קטנה
+// minUppercase:1 מינימום אות 1 גדולה
+// minNumbers:1 מינימום מספר אחד
+// minSymbols:1 מינימום תו אחד מיוחד
 userSchema.methods.isStrongPassword = async function () {
     const user = this;
     if (validator.isStrongPassword(user.password, { minLength: 8, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 1 }))
