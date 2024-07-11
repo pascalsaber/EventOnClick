@@ -51,18 +51,15 @@ const userSchema = new Schema({
     //events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
 });
 
-//token פונקציה לייצרת
+//Token פונקציה לייצרת
 userSchema.methods.generateToken = async function () {
     const user = this;
-
     let data = {
         signInTime: Date.now(),
         _id: this._id,
         username: this.username
     }
     const token = jwt.sign(data, process.env.GLOBAL_TOKEN_SECRET, { expiresIn: '1 hour' }); //1800s - 30 minutes
-
-    //const token = jwt.sign({ _id: user._id }, 'H57gd1!@$nsdaf32487sd', { expiresIn: '1 hour' });
     //user.tokens.push({ token }); //הוספה למערך במקום האחרון
     return token;
 }
@@ -79,7 +76,6 @@ userSchema.methods.isStrongPassword = async function () {
     else
         return false;
 }
-
 
 /*
 userSchema.pre('save', async function(next) 
@@ -100,5 +96,6 @@ userSchema.pre('save', async function(next)
         console.log(err);
     }
 }); */
+
 const UserData = mongoose.model('User', userSchema);
 module.exports = UserData;
