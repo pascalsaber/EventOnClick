@@ -35,9 +35,7 @@ const userSchema = new Schema({
         type: Number,
         trim: true,
         required: true,
-        min: 18,
-        max: 65
-
+        min: 18
     },
     email: {
         type: String,
