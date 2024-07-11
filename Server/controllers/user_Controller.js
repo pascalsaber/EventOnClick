@@ -102,16 +102,4 @@ exports.findUserByID = async (request, result) => {
         result.status(500).send(error.message);
     }
 }
-exports.test = async (request, result) => {
-    try {
-        const data = request.query.test;
 
-        if (!data) {
-            return result.status(404).send('No data');
-        }
-
-        result.send(data);
-    } catch (error) {
-        result.status(500).send(error.message);
-    }
-}
