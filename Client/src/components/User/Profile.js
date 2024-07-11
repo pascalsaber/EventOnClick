@@ -13,6 +13,21 @@ function Profile() {
     const [status, setStatus] = useState("");
     const [message, setMessage] = useState("");
 
+    const handleSubmit = async (event) => {
+        event.preventDefault(); //לא לבצע רענון לעמוד
+        try {
+           
+        } catch (error) {
+            console.error(`[HandleSubmit Error] ${error}`);
+        }
+    }
+
+    const handleChange = (event) => {
+        const name = event.target.name;
+        const value = event.target.value;
+        setInputs(values => ({ ...values, [name]: value })) //input["id"] = "9snahdf8ui4hi34uh5"
+    }
+
     useEffect(() => {
         async function fetchData() {
             try {
@@ -37,6 +52,11 @@ function Profile() {
                 const dataJSON = await fetchResponse.json();
                 setMessage("Success");
                 setData([dataJSON]);
+
+                setInputs(values => ({ ...values, ['username']: dataJSON.data.username }))
+                setInputs(values => ({ ...values, ["firstName"]: dataJSON.data.firstName }))
+                setInputs(values => ({ ...values, ["lastName"]: dataJSON.data.lastName }))
+                setInputs(values => ({ ...values, ["email"]: dataJSON.data.email }))
             } catch (error) {
                 console.error(error);
             }
@@ -50,12 +70,47 @@ function Profile() {
         <div>
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
-                <div>
-                    <p>[STATUS] {status}</p>
-                    <p>[RESPONSE] {message}</p>
-                    <p>[JSON] {JSON.stringify(data)}</p>
-                </div>        
-                {data ? data.map((item, index) => (
+                <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+                    <label>Username</label>
+                    <input
+                        type="text"
+                        name="username"
+                        value={inputs.username || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <label>First Name</label>
+                    <input
+                        type="text"
+                        name="firstName"
+                        value={inputs.firstName || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <label>Last Name</label>
+                    <input
+                        type="text"
+                        name="lastName"
+                        value={inputs.lastName || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <label>Email</label>
+                    <input
+                        type="text"
+                        name="email"
+                        value={inputs.email || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <input type="submit" value="Update" />
+                    <div>
+                        <p>[STATUS] {status}</p>
+                        <p>[MESSAGE] {message}</p>
+                        <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
+                    </div>
+                </form>
+                {/*data ? data.map((item, index) => (
                     <form>
                         <table style={{ width: '100%' }}>
                             <tr>
@@ -70,7 +125,7 @@ function Profile() {
                         </table>
                     </form>
                 )) : <p>Loading...</p>
-                }
+                */}
             </MainContent>
         </div>
     );
