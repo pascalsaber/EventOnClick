@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
-    margin-left: 160px; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
 
 function Register() {

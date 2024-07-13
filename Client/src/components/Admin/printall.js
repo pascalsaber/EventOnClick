@@ -3,8 +3,10 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 
 const MainContent = styled.div`
-  margin-left: 160px; // Adjust this value as needed
+    margin-right: 1%; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
+
 // על מנת לשנות משתנים 
 function PrintAll() {
   const [data, setData] = useState(null);
@@ -24,6 +26,7 @@ function PrintAll() {
     <div>
       <Menu /> {/* Here's your NavBar component */}
       <MainContent>
+        <br></br>
         {/* Render your data here */}
         {data.map((item, index) => (
           <form>

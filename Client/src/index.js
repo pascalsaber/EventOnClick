@@ -2,12 +2,7 @@
 //import reportWebVitals from './reportWebVitals';
 import React from "react";
 import ReactDOM from "react-dom/client";
-import {
-  Route,
-  RouterProvider,
-  createBrowserRouter,
-  createRoutesFromElements
-} from "react-router-dom";
+import { Route, RouterProvider, createBrowserRouter, createRoutesFromElements } from "react-router-dom";
 import "./styles.css";
 
 // User Components
@@ -17,28 +12,29 @@ import Logoff from './components/User/Logoff'
 import Profile from './components/User/Profile'
 
 // Admin Components
-import PrintAll from './components/temp/printall'
-import FindUserByID from './components/temp/findUserByID'
-import Test from './components/temp/test'
+import PrintAll from './components/Admin/printall'
+import FindUserByID from './components/Admin/findUserByID'
 
 // Event Components
-import AddEvent from './components/addEvent'
-import AllEvents from "./components/User/AllEvents";
+import AddEvent from './components/Event/addEvent'
+import AllEvents from "./components/Event/AllEvents";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
       <Route path="" element={<Login />} />
+      {/*User*/}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="/logoff" element={<Logoff />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/logoff" element={<Profile />} />
+      {/*Event*/}
       <Route path="/printall" element={<PrintAll />} />
-      <Route path="/findUserByID" element={<FindUserByID />} />
-      <Route path="/test" element={<Test />} />
       <Route path="/addEvent" element={<AddEvent />} />
+      {/*Admin*/}
       <Route path="/allEvents" element={<AllEvents />} />
+      <Route path="/findUserByID" element={<FindUserByID />} />
     </>
   )
 );

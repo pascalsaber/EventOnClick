@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
-    margin-left: 160px; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
 
 function AllEvents() {
@@ -55,6 +55,7 @@ function AllEvents() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <div>
+                    <br></br>
                     <p>[STATUS] {status}</p>
                     <p>[MESSAGE] {message}</p>
                     <p>[JSON] {JSON.stringify(data)}</p>

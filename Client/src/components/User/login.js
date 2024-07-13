@@ -2,10 +2,14 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Form from 'react-bootstrap/Form';
+import Button from 'react-bootstrap/Button';
+import Stack from 'react-bootstrap/Stack';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
-    margin-left: 160px; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
 
 function Login() {
@@ -60,22 +64,27 @@ function Login() {
                 <br></br>
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <label>Username</label>
-                    <input
+                    <Form.Control
+                        size="sm"
                         type="text"
                         name="username"
                         value={inputs.username || ""}
                         onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
+                        placeholder="Username"
                     />
                     <label>Password</label>
-                    <input
+                    <Form.Control
+                        size="sm"
                         type="text"
                         name="password"
                         value={inputs.password || ""}
                         onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
+                        placeholder="Password"
                     />
-                    <input type="submit" value="Login" />
+                    <div className="d-grid gap-2">
+                        <Button variant="primary" size="lg" type="submit">Login</Button>
+                    </div>
+
                     <div>
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>

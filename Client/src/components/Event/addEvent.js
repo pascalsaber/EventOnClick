@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import Menu from './menu'; // make sure the path is correct
+import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
-    margin-left: 160px; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
 
 function AddEvent() {

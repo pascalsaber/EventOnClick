@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
-    margin-left: 160px; // Adjust this value as needed
+    margin-left: 1%; // Adjust this value as needed
 `;
 
 function Profile() {
@@ -16,7 +16,7 @@ function Profile() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-           
+
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -65,11 +65,11 @@ function Profile() {
 
     }, []); // Empty array means this effect runs once on mount
 
-
     return (
         <div>
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
+                <br></br>
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <label>Username</label>
                     <input
