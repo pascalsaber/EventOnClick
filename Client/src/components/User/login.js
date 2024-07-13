@@ -3,6 +3,8 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 
 const MainContent = styled.div`
@@ -60,30 +62,34 @@ function Login() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <br></br>
-                <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-                    <label>Username</label>
-                    <Form.Control
-                        size="sm"
-                        type="text"
-                        name="username"
-                        value={inputs.username || ""}
-                        onChange={handleChange}
-                        placeholder="Enter your Username"
-                    />
-                    <label>Password</label>
-                    <Form.Control
-                        size="sm"
-                        type="text"
-                        name="password"
-                        value={inputs.password || ""}
-                        onChange={handleChange}
-                        placeholder="Enter your Password"
-                    />
+                <form class="form" onSubmit={handleSubmit}>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Username</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder="Enter your Username"
+                                type="text"
+                                name="username"
+                                value={inputs.username || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Password</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder="Enter your Password"
+                                type="text"
+                                name="password"
+                                value={inputs.password || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
                     <div className="d-grid gap-2">
                         <Button variant="primary" size="lg" type="submit">Login</Button>
-                    </div>
-
-                    <div>
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
                         <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>

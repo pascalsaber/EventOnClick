@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import Form from 'react-bootstrap/Form';
+import Col from 'react-bootstrap/Col';
+import Row from 'react-bootstrap/Row';
+import Button from 'react-bootstrap/Button';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -58,63 +62,87 @@ function Register() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <br></br>
-                <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-                    <label>Username</label>
-                    <input
-                        type="text"
-                        name="username"
-                        value={inputs.username || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <label>Password</label>
-                    <input
-                        type="text"
-                        name="password"
-                        value={inputs.password || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <label>FirstName</label>
-                    <input
-                        type="text"
-                        name="firstName"
-                        value={inputs.firstName || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <label>LastName</label>
-                    <input
-                        type="text"
-                        name="lastName"
-                        value={inputs.lastName || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <label>Age</label>
-                    <input
-                        type="number"
-                        name="age"
-                        value={inputs.age || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <label>Email</label>
-                    <input
-                        type="text"
-                        name="email"
-                        value={inputs.email || ""}
-                        onChange={handleChange}
-                        style={{ marginLeft: '10px' }}
-                    />
-                    <input type="submit" value="Register" />
-                    <div>
+                <form class="form" onSubmit={handleSubmit}>
+
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Username</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="text"
+                                name="username"
+                                value={inputs.username || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Password</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="text"
+                                name="password"
+                                value={inputs.password || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">First Name</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="text"
+                                name="firstName"
+                                value={inputs.firstName || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Last Name</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="text"
+                                name="lastName"
+                                value={inputs.lastName || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Age</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="number"
+                                name="age"
+                                value={inputs.age || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Email</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="number"
+                                name="email"
+                                value={inputs.email || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <div className="d-grid gap-2">
+                        <Button variant="primary" size="lg" type="submit">Register</Button>
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
                         <p>[JSON] {JSON.stringify(data)}</p>
                     </div>
                 </form>
-
 
                 {/*data !== null && data.map((item, index) => (
                     item.name === inputs.name ? <div style={{ color: 'green' }}>Found user with this name!</div> : <div style={{ color: 'red' }}>Not the user!</div>
