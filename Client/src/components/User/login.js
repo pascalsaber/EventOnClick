@@ -2,10 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
-import 'bootstrap/dist/css/bootstrap.min.css';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
-import Stack from 'react-bootstrap/Stack';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -70,7 +68,7 @@ function Login() {
                         name="username"
                         value={inputs.username || ""}
                         onChange={handleChange}
-                        placeholder="Username"
+                        placeholder="Enter your Username"
                     />
                     <label>Password</label>
                     <Form.Control
@@ -79,7 +77,7 @@ function Login() {
                         name="password"
                         value={inputs.password || ""}
                         onChange={handleChange}
-                        placeholder="Password"
+                        placeholder="Enter your Password"
                     />
                     <div className="d-grid gap-2">
                         <Button variant="primary" size="lg" type="submit">Login</Button>
