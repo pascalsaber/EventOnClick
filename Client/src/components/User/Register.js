@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import Form from 'react-bootstrap/Form';
+import Form from 'react-bootstrap/Form'; //https://react-bootstrap.netlify.app/docs/forms/form-control
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
