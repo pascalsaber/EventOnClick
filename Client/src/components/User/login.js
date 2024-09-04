@@ -64,8 +64,8 @@ function Login() {
                 <br></br>
                 <form class="form" onSubmit={handleSubmit}>
                     <Form.Group as={Row} className="mb-1">
-                        <Form.Label column sm="1">Username</Form.Label>
-                        <Col sm="11">
+                        <Form.Label column sm="2">Username</Form.Label>
+                        <Col sm="10">
                             <Form.Control
                                 size="sm"
                                 placeholder="Enter your Username"
@@ -77,8 +77,8 @@ function Login() {
                     </Form.Group>
 
                     <Form.Group as={Row} className="mb-1">
-                        <Form.Label column sm="1">Password</Form.Label>
-                        <Col sm="11">
+                        <Form.Label column sm="2">Password</Form.Label>
+                        <Col sm="10">
                             <Form.Control
                                 size="sm"
                                 placeholder="Enter your Password"

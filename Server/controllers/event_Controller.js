@@ -1,28 +1,40 @@
 const Event = require("../db/models/event");
 const User = require("../db/models/user");
 
+//request=בקשה , result=תוצאה 
+//מטרת פונקציה היא להוסיף אירוע חדש למסד הנתונים
+// 
 exports.add = async (request, result) => {
     try {
 
-        //בכל פעולה שקשורה למשתמש נצתרך לפענח את המידע של הטוקן על מנת לאמת את הזהות
+        // ייבוא מודול לפענוח הטוקן
         const jwt = require('jsonwebtoken');
+        // חילוץ הטוקן מהכותרת של הבקשה
         const token = request.headers.authorization.split(' ')[1]; // Extract token from header
+        // פענוח הטוקן באמצעות המפתח הסודי
         const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
-
+        // שהתקבל מהטוקן ID-חיפוש המשתמש במסד הנתונים לפי ה
         const data = await User.findOne({ _id: decoded._id });
+        //אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
             return result.status(401).send('No such ID in the database.'); //throw new Error
         }
-
+        // הוספת ה-ID של המשתמש לגוף הבקשה
         request.body.userID = data._id;
-
-        const newEvent = new Event(request.body); //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
+        //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
+        const newEvent = new Event(request.body);
+        // שמירת האירוע החדש במסד הנתונים
         const progress = await newEvent.save();
-        result.send(progress);
+        // שליחת התגובה עם המידע על האירוע שנשמר
+        result.send(progress); 
     } catch (error) {
+        // במקרה ומתבצעת שגיאה באחת מהשלבים 
+        //(שגיאת שרת פנימית) מחזירים הודעת שגיאה עם סטטוס 500
         result.status(500).send(error.message);
     }
 }
+// מטרתה להחזיר רשימה של אירועים בהתאם לבקשה
+// לשאול את אהובי על הפונקציה הזאת הסתבכתי איתה 
 exports.enumRequest = async (request, result) => {
     try {
         const event = new Event();
@@ -34,20 +46,27 @@ exports.enumRequest = async (request, result) => {
 }
 exports.allEvents = async (request, result) => {
     try {
+        // ייבוא מודול לפענוח הטוקן
         const jwt = require('jsonwebtoken');
+        // חילוץ הטוקן מהכותרת של הבקשה
         const token = request.headers.authorization.split(' ')[1]; // Extract token from header
+        // פענוח הטוקן באמצעות המפתח הסודי
         const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
+        // שהתקבל מהטוקן ID-חיפוש המשתמש במסד הנתונים לפי ה
         const data = await User.findOne({ _id: decoded._id });
+        //אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
             return result.status(401).send('No such ID in the database.'); //throw new Error
         }
-
+        // אם קיים המשתמש
+        // של המשתמש ID-מחפש את כל האירועים במסד הנתונים שקשורים ל
         const allEvents = await Event.find({ userID: decoded._id });
+        // אם לא נמצאו אירועים, מחזיר הודעת שגיאה עם סטטוס 401 (לא מורשה)
         if (allEvents.length == 0) {
             return result.status(401).send('No events in the database.'); //throw new Error
         }
-
         // Handle the verified data (e.g., user ID)
+        // שולח את כל האירועים שנמצאו חזרה ללקוח
         result.send(allEvents);
     } catch (error) {
         result.status(500).send(error.message);

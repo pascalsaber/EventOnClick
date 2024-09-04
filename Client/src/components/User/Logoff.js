@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 function Logoff() {
@@ -12,8 +12,8 @@ function Logoff() {
                 console.error(error);
             }
         }
-        Main(); //Call the Main function
-    }, []); // Empty array means this effect runs once on mount
+        Main()
+    }, []); // Empty array means this effect runs once on mount*/
 }
 
 export default Logoff;
