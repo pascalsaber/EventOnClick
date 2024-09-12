@@ -1,15 +1,15 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const enumType = ["First Meal", "Second Meal", "salad","Table"];
+const categoryList = ["First Meal", "Second Meal", "Salad", "Table"];
 
 const ProductSchema = new Schema({
     name: {
         type: String,
         required: true
     },
-    type: {
+    category: {
         type: String,
-        enum: enumType,
+        enum: categoryList,
         required: true
     },
     price: {
@@ -17,15 +17,17 @@ const ProductSchema = new Schema({
         trim: true,
         required: true,
     }
-    
 });
 
+// מחזירה רשימה של משתנים בהתאם לפרמטר שנשלח
+// במטרה להציג רשימה של אפשרויות באתר
 ProductSchema.methods.enumRequest = async function (enumRequest) {
-    if (enumRequest == "type")
-        return enumType;
+    if (enumRequest == "category")
+        return categoryList;
     return "No data.";
 };
 
+//
 const ProductData = mongoose.model('Product', ProductSchema);
 
 module.exports = ProductData;

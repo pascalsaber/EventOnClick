@@ -26,8 +26,8 @@ function AddEvent() {
             if (!token)
                 navigate("/login");
         }
-        async function fetch_enum(enumRequest) {
-            const fetchResponse = await fetch(`http://localhost:5000/event/enumRequest?enumRequest=${enumRequest}`);
+        async function fetch_enum(type) {
+            const fetchResponse = await fetch(`http://localhost:5000/event/returnEnumListByType?type=${type}`);
             if (fetchResponse.ok) {
                 let responseJSON = await fetchResponse.json();
                 let list = [{ value: "", label: "Select..." }];
@@ -37,9 +37,9 @@ function AddEvent() {
                         label: item
                     });
                 });
-                if (enumRequest == "location")
+                if (type == "location")
                     setEnumLocationList(list);
-                else if (enumRequest == "type")
+                else if (type == "type")
                     setEnumTypeList(list);
             }
         }

@@ -3,6 +3,6 @@ const router = express.Router();
 const eventController = require("../controllers/event_Controller");
 
 router.post("/add", eventController.add);
-router.get("/enumRequest", eventController.enumRequest);
+router.get("/returnEnumListByType", eventController.returnEnumListByType);
 router.get("/allEvents", eventController.allEvents);
 module.exports = router;

@@ -11,7 +11,7 @@ const bcrypt = require('bcryptjs');
 
 const UserRouter = require('../routers/user_Router');
 const EventRouter = require('../routers/event_Router');
-
+const ProductRouter = require('../routers/product_Router');
 //תבנית התחברות לבסיס הנתונים
 mongoose.connect('mongodb://localhost:27017/EventOnClick'); //חיבור לבסיס הנתונים
 const mongoDB = mongoose.connection;
@@ -53,3 +53,4 @@ app.listen(port, () => {
 // על פי הקישור אליו פונים
 app.use('/user', UserRouter);
 app.use('/event', EventRouter);
+app.use('/product', ProductRouter);

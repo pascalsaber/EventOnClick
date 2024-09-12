@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
+const Meal = require('./meal')
 
 const enumLocation = ["Inside the Hall", "Outside the Hall"];
 const enumType = ["Party", "Wedding", "Bar/Bat Mitzvah"];
@@ -31,7 +32,10 @@ const EventSchema = new Schema({
     notes: {
         type: String,
         maxlength: 500,
-    }
+    },
+    meals: [{
+        type: Meal
+    }]
 });
 
 /*
@@ -60,6 +64,16 @@ EventSchema.methods.enumRequest = async function (enumRequest) {
         return enumType;
     return "No data.";
 };
+EventSchema.methods.addToList = async function (reqBody) {
+    try {
+        const event = this;
+        event.lists.push(reqBody); //הוספה למערך במקום האחרון
+        await event.save();
+    }
+    catch (err) {
+        console.log(err);
+    }
+};
 
 // בדיקת תאריך פנוי לאירוע
 EventSchema.statics.validDate = async function (yourDate) {
@@ -70,6 +84,7 @@ EventSchema.statics.validDate = async function (yourDate) {
         console.log('התאריך פנוי');
     }
 };
+
 
 const EventData = mongoose.model('Event', EventSchema);
 

@@ -19,6 +19,9 @@ import FindUserByID from './components/Admin/findUserByID'
 import AddEvent from './components/Event/addEvent'
 import AllEvents from "./components/Event/AllEvents";
 
+// Product Components
+import AllProducts from "./components/Product/AllProducts.js";
+
 const router = createBrowserRouter(
   createRoutesFromElements(
     <>
@@ -32,6 +35,8 @@ const router = createBrowserRouter(
       {/*Event*/}
       <Route path="/printall" element={<PrintAll />} />
       <Route path="/addEvent" element={<AddEvent />} />
+      {/*Product*/}
+      <Route path="/allproducts" element={<AllProducts />} />
       {/*Admin*/}
       <Route path="/allEvents" element={<AllEvents />} />
       <Route path="/findUserByID" element={<FindUserByID />} />
