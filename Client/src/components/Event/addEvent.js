@@ -58,23 +58,25 @@ function AddEvent() {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
             const token = localStorage.getItem('jwt-token');
-            const fetchResponse = await fetch("http://localhost:5000/event/add", {
-                method: "POST",
+            const fetchResponse = await fetch("http://localhost:5000/event/add", { // לאיזה כתובת לפנות 
+                method: "POST", // שיטה הפניה 
                 headers: {
                     "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
+                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
                 },
-                body: JSON.stringify({
+                body: JSON.stringify({ // המרת המידעה שנשלח כבדי מהטופס לאקספרס
+                    // האינפוט הוא המידעה שנרשם בטופס
                     name: inputs.name,
                     date: inputs.date,
                     location: inputs.location,
                     type: inputs.type,
-                    notes: inputs.notes
+                    notes: inputs.notes,
                 })
             });
 
             setData(null);
             setStatus(`${fetchResponse.status}`);
+            //ok אם הסטטוס שונה מ200 שהוא
             if (!fetchResponse.ok) {
                 let responseText = await fetchResponse.text();
                 setMessage(responseText);
@@ -84,6 +86,7 @@ function AddEvent() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
+            navigate("/selectAMeal"); 
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -133,7 +136,6 @@ function AddEvent() {
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
                         <p>[JSON] {JSON.stringify(data)}</p>
-                        <p>{JSON.stringify(enumLocationList)}</p>
                     </div>
                 </form>
             </MainContent>
