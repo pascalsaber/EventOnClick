@@ -82,7 +82,7 @@ exports.profile = [
             const userData = request.userData;
             result.json({ userData });
         } catch (error) {
-            result.status(500).json({ message: 'An error occurred while fetching.' });
+            result.status(500).json({ message: 'An error occurred while fetching: ' + error });
         }
     }
 ];
@@ -91,10 +91,10 @@ exports.updateUserByID = [
     authenticateToken, // Middleware
     async (request, result) => {
         try {
-            const userData = request.userData;
-            result.json(request);
+            //const userData = request.userData;
+            result.json(request.body);
         } catch (error) {
-            result.status(500).json({ message: 'An error occurred while fetching.' });
+            result.status(500).json({ message: 'An error occurred while fetching: ' + error });
         }
     }
 ];

@@ -9,6 +9,7 @@ const MainContent = styled.div`
 `;
 
 function AddEvent() {
+    const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
@@ -22,7 +23,6 @@ function AddEvent() {
 
     useEffect(() => {
         function checkLogin() {
-            const token = localStorage.getItem('jwt-token');
             if (!token)
                 navigate("/login");
         }
@@ -57,7 +57,6 @@ function AddEvent() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            const token = localStorage.getItem('jwt-token');
             const fetchResponse = await fetch("http://localhost:5000/event/add", { // לאיזה כתובת לפנות 
                 method: "POST", // שיטה הפניה 
                 headers: {
@@ -87,7 +86,7 @@ function AddEvent() {
             setMessage("Success");
             //setData([dataJSON]);
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
-            navigate(`/selectAMeal?eventid=${dataJSON._id}`); //Maroun 
+            navigate(`/selectAMeal?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }

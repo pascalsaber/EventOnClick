@@ -8,6 +8,7 @@ const MainContent = styled.div`
 `;
 
 function Profile() {
+    const token = localStorage.getItem('jwt-token');
     const [data, setData] = useState(null);
     const [inputs, setInputs] = useState({});
     const [status, setStatus] = useState("");
@@ -16,7 +17,37 @@ function Profile() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
+            setData(null);
+            if (inputs.password != inputs.retypePassword) //בדיקה שהסיסמא זהה בשתי השדות
+                return setMessage("Password do not match.");
+            const fetchResponse = await fetch("http://localhost:5000/user/updateUserByID", { // לאיזה כתובת לפנות 
+                method: "POST", // שיטה הפניה 
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+                },
+                body: JSON.stringify({ // המרת המידעה שנשלח כבדי מהטופס לאקספרס
+                    // האינפוט הוא המידעה שנרשם בטופס
+                    username: inputs.username,
+                    firstName: inputs.firstName,
+                    lastName: inputs.lastName,
+                    email: inputs.email,
+                })
+            });
 
+            setStatus(`${fetchResponse.status}`);
+            //ok אם הסטטוס שונה מ200 שהוא
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
+            }
+            // מכיל את המידע שחוזר מהאקספרס שהוא בעצם האירוע החדש שיצרנו
+            const dataJSON = await fetchResponse.json();
+            setMessage("Success");
+            setData([dataJSON]);
+            //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
+            //navigate(`/selectAMeal?eventid=${dataJSON._id}`); //Maroun 
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -31,8 +62,6 @@ function Profile() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const token = localStorage.getItem('jwt-token');
-
                 const myHeaders = new Headers();
                 myHeaders.append("Content-Type", "application/json");
                 myHeaders.append('Authorization', `Bearer ${token}`);
@@ -53,10 +82,10 @@ function Profile() {
                 setMessage("Success");
                 setData([dataJSON]);
 
-                setInputs(values => ({ ...values, ['username']: dataJSON.data.username }))
-                setInputs(values => ({ ...values, ["firstName"]: dataJSON.data.firstName }))
-                setInputs(values => ({ ...values, ["lastName"]: dataJSON.data.lastName }))
-                setInputs(values => ({ ...values, ["email"]: dataJSON.data.email }))
+                setInputs(values => ({ ...values, ['username']: dataJSON.userData.username }))
+                setInputs(values => ({ ...values, ["firstName"]: dataJSON.userData.firstName }))
+                setInputs(values => ({ ...values, ["lastName"]: dataJSON.userData.lastName }))
+                setInputs(values => ({ ...values, ["email"]: dataJSON.userData.email }))
             } catch (error) {
                 console.error(error);
             }
@@ -73,9 +102,26 @@ function Profile() {
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <label>Username</label>
                     <input
+                        disabled
                         type="text"
                         name="username"
                         value={inputs.username || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <label>Password</label>
+                    <input
+                        type="password"
+                        name="password"
+                        value={inputs.password || ""}
+                        onChange={handleChange}
+                        style={{ marginLeft: '10px' }}
+                    />
+                    <label>Retype Password</label>
+                    <input
+                        type="password"
+                        name="retypePassword"
+                        value={inputs.retypePassword || ""}
                         onChange={handleChange}
                         style={{ marginLeft: '10px' }}
                     />
