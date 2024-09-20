@@ -38,16 +38,21 @@ exports.register = async (request, result) => {
     }
 }
 // פונקציה שמוצאת את כל המשתמשים במסד הנתונים ושולחת את התוצאה ללקוח
-exports.printall = async (request, result) => {
-    try {
-        // Userפרמטרים היא מחזירה את כל המשתמשים שנמצאים במודל הfind() כאשר לא מעבירים לפונקציה
-        const allUsers = await User.find();
+exports.printall = [
+    authenticateToken, // Middleware
+    async (request, result) => {
+        try {
+            const userData = request.userData;
+            if (userData.status == 0)
+                result.status(500).json({ message: 'Must be admin.' });
 
-        result.send(allUsers);
-    } catch (error) {
-        result.status(500).send(error.message);
-    }
-}
+            const allUsers = await User.find();
+            result.json(allUsers);
+        } catch (error) {
+            result.status(500).json({ message: 'An error occurred while fetching: ' + error });
+        }
+    }];
+
 // מטרת הפונקציה לאמת את פרטי ההתחברות של המשתמש (שם משתמש וסיסמה) וליצור טוקן אימות
 exports.login = async (request, result) => {
     try {
@@ -84,8 +89,7 @@ exports.profile = [
         } catch (error) {
             result.status(500).json({ message: 'An error occurred while fetching: ' + error });
         }
-    }
-];
+    }];
 
 exports.updateUserByID = [
     authenticateToken, // Middleware
@@ -96,26 +100,8 @@ exports.updateUserByID = [
         } catch (error) {
             result.status(500).json({ message: 'An error occurred while fetching: ' + error });
         }
-    }
-];
+    }];
 
-exports.updateUserByID1 = async (request, result) => {
-    try {
-        const req_id = request.query.id;
-        const req_password = request.query.password;
-        const data = await User.findByIdAndUpdate(req_id, { password: req_password });
-
-        if (!data) {
-            // סטטוס 404 מציין שהשרת לא מצא את הכתובת המבוקשת 
-            return result.status(404).send('No data');
-        }
-
-        result.send(data);
-    } catch (error) {
-        //סטטוס 500 אם אי אפשר לגשת לשרת
-        result.status(500).send(error.message);
-    }
-}
 // מטרת הפונקציה היא לחפש ולהחזיר משתמש מהמסד הנתונים לפי אידי שלו
 exports.findUserByID = async (request, result) => {
     try {

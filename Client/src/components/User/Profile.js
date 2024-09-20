@@ -46,8 +46,6 @@ function Profile() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
-            //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
-            //navigate(`/selectAMeal?eventid=${dataJSON._id}`); //Maroun 
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -62,13 +60,12 @@ function Profile() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const myHeaders = new Headers();
-                myHeaders.append("Content-Type", "application/json");
-                myHeaders.append('Authorization', `Bearer ${token}`);
-
-                const fetchResponse = await fetch("http://localhost:5000/user/profile", {
-                    method: "GET",
-                    headers: myHeaders
+                const fetchResponse = await fetch("http://localhost:5000/user/profile", { // לאיזה כתובת לפנות 
+                    method: "GET", // שיטה הפניה 
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+                    }
                 });
 
                 setStatus(`${fetchResponse.status}`);
@@ -151,52 +148,19 @@ function Profile() {
                     />
                     <input type="submit" value="Update" />
                     <div>
-                        <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
-                        <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
+                        {process.env.REACT_APP_TESTING === 'TRUE' ?
+                            <>
+                                <h5>Testing Mode</h5>
+                                <p>[STATUS] {status}</p>
+                                <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
+                            </> : null
+                        }
                     </div>
                 </form>
-                {/*data ? data.map((item, index) => (
-                    <form>
-                        <table style={{ width: '100%' }}>
-                            <tr>
-                                <td style={{ width: "100px" }} >Index: {index}</td>
-                                <td style={{ width: "100px" }} >ID: {item._id}</td>
-                                <td style={{ width: "100px" }}>Username: {item.username}</td>
-                                <td style={{ width: "100px" }}>Password: {item.password}</td>
-                                <td style={{ width: "100px" }}>First Name: {item.firstName}</td>
-                                <td style={{ width: "100px" }}>Last Name: {item.lastName}</td>
-                                <td style={{ width: "100px" }}>Email: {item.email}</td>
-                            </tr>
-                        </table>
-                    </form>
-                )) : <p>Loading...</p>
-                */}
             </MainContent>
         </div>
     );
 }
 
 export default Profile;
-/*
-export function TestLogin() {
-    //const { decodedToken, isExpired } = useJwt(token);
-    // src/components/Profile.js
-    const token = localStorage.getItem('token');
-    fetch('/api/profile', {
-        headers: {
-            Authorization: `Bearer ${token}`,
-        },
-    })
-        .then((response) => response.json())
-        .then((userData) => {
-            // Use user data
-        })
-        .catch((error) => {
-            // Handle unauthorized access
-        });
-    return (
-        <div>Decoded Token: {decodedToken}</div>
-    );
-};*/
-

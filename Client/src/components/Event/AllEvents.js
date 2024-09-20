@@ -56,7 +56,7 @@ function AllEvents() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <br></br>
-                <form class="form">
+                <div class="form">
                     <Table striped bordered hover size="sm">
                         <thead>
                             <tr>
@@ -82,14 +82,18 @@ function AllEvents() {
                         )) : <p>Loading...</p>
                         }
                     </Table>
-                    <p>[STATUS] {status}</p>
                     <p>[MESSAGE] {message}</p>
-                    {/*<p>[JSON] {JSON.stringify(data)}</p>*/}
-                </form>
+                    {process.env.REACT_APP_TESTING === 'TRUE' ?
+                        <>
+                            <h5>Testing Mode</h5>
+                            <p>[STATUS] {status}</p>
+                            <p>[JSON] {JSON.stringify(data)}</p>
+                        </> : null
+                    }
+                </div>
             </MainContent>
         </div >
     );
-
 }
 
 export default AllEvents;

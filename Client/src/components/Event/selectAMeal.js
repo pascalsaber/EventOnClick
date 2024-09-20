@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 
@@ -7,7 +7,8 @@ const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
     margin-left: 1%; // Adjust this value as needed
 `;
-function MyForm() {
+
+function SelectAMeal() {
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
@@ -28,7 +29,7 @@ function MyForm() {
     const [formData, setFormData] = useState(initialFormData); // עבור התיבות בחירה
 
     //מכיל את כל המידע של המוצרים בקטגוריה של מנה ראשית
-    const [firstMealProducts, setFirstMealProducts] = useState([]) 
+    const [firstMealProducts, setFirstMealProducts] = useState([]);
     const [secondMealProducts, setSecondMealProducts] = useState([])
 
     const [firstMealList, setFirstMealList] = useState([{ value: "", label: "Error Loading from Database..." }])
@@ -39,6 +40,96 @@ function MyForm() {
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
+
+    // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
+    async function fetch_findProductByCategory(category) {
+        //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
+        const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
+            method: "POST", // שיטה הפניה
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+            },
+            body: JSON.stringify(
+                { //JSON המרת המידע שנשלח כגוף הבקשה ל
+                    //הקטגוריה שנבחרה
+                    category: category
+                })
+        });
+        // בודק אם הבקשה הצליחה
+        if (fetchResponse.ok) {
+            //JSON- ממיר את התגובה ל
+            let responseJSON = await fetchResponse.json();
+            console.log("responseJSON: " + JSON.stringify(responseJSON));
+            // יוצר רשימה חדשה עם אפשרות בחירה ריקה
+            let list = [{ value: "", label: "Select..." }];
+            // ממפה את המוצרים לרשימה עם שם ומחיר
+            responseJSON.map((item) => {
+                list.push({
+                    value: item.name,
+                    // מה שיוצג למשתמש ברשימת הבחירה
+                    label: [`${item.name} (${item.price}₪)`]
+                });
+            });
+            if (category == "First Meal") {
+                // מכיל את הרשימה המלאה של המוצרים שהם מנות ראשונות
+                setFirstMealProducts(responseJSON);
+                console.log("setFirstMealProducts: " + JSON.stringify(firstMealProducts));
+                // מכיל את הרשימה שתוצג בתפריט הבחירה של מוצרים של מנות ראשונות
+                setFirstMealList(list);
+            }
+            else if (category == "Second Meal") {
+                setSecondMealProducts(responseJSON);
+                setSecondMealList(list);
+            }
+        }
+    }
+    // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
+    async function fetchData(eventID) {
+        try {
+            //eventID לשרת עם get שולח בקשת 
+            const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            // מעדכן את הסטטוס של הבקשה
+            setStatus(`${fetchResponse.status}`);
+            // בודק אם הבקשה לא הצליחה
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
+            }
+            //JSON -ממיר את התגובה ל
+            const dataJSON = await fetchResponse.json();
+            setMessage("Success"); //TEMP
+            setData(dataJSON);
+            // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
+            dataJSON.meals.forEach((meal, index) => {
+                if (meal != null) {
+                    // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
+                    // על מנת להעזר בה בלדעת את מחיר המוצר
+                    const filter_firstMeal = firstMealProducts.filter(item => item.name === meal.firstMeal);
+                    const filter_secondMeal = secondMealProducts.filter(item => item.name === meal.secondMeal);
+                    console.log("filtered..." + JSON.stringify(filter_firstMeal))
+                    console.log("filtered..." + filter_firstMeal[0].price)
+                    // מעדכן את המצב של הארוחות והמחיר
+                    const option = `option${index + 1}`;
+                    handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
+                    handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
+                    handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
+                    let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price) * meal.amount;
+                    handleChange({ target: { name: `${option}.price`, value: totalPrice } });
+                }
+            });
+        } catch (error) {
+            // מדפיס שגיאה אם יש
+            console.error(error);
+        }
+    }
     // useEffect- קומפוננטה המופעלת לאחר פעולה שמתבצעת 
     // במקרה הזה זה קורה פעם אחת כשמעלים את העמוד 
     useEffect(() => {
@@ -47,102 +138,20 @@ function MyForm() {
             if (!token)
                 navigate("/login");
         }
-        // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
-        async function fetch_findProductByCategory(category) {
-            //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
-            const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
-                method: "POST", // שיטה הפניה
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify(
-                    { //JSON המרת המידע שנשלח כגוף הבקשה ל
-                        //הקטגוריה שנבחרה
-                        category: category
-                    })
-            });
-            // בודק אם הבקשה הצליחה
-            if (fetchResponse.ok) {
-                //JSON- ממיר את התגובה ל
-                let responseJSON = await fetchResponse.json();
-                console.log("responseJSON: " + responseJSON);
-                // יוצר רשימה חדשה עם אפשרות בחירה ריקה
-                let list = [{ value: "", label: "Select..." }];
-                // ממפה את המוצרים לרשימה עם שם ומחיר
-                responseJSON.map((item) => {
-                    list.push({
-                        value: item.name,
-                        // מה שיוצג למשתמש ברשימת הבחירה
-                        label: [`${item.name} (${item.price}₪)`]
-                    });
-                });
-                if (category == "First Meal"){
-                    // מכיל את הרשימה שתוצג בתפריט הבחירה של מוצרים של מנות ראשונות
-                    setFirstMealList(list);
-                    // מכיל את הרשימה המלאה של המוצרים שהם מנות ראשונות
-                    setFirstMealProducts(responseJSON);
-                }                 
-                else if (category == "Second Meal"){
-                    setSecondMealList(list);
-                    setSecondMealProducts(responseJSON);
-                }    
-            }
-        }
-        // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
-        async function fetchData(eventID) {
-            try {
-                //eventID לשרת עם get שולח בקשת 
-                const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                // מעדכן את הסטטוס של הבקשה
-                setStatus(`${fetchResponse.status}`);
-                // בודק אם הבקשה לא הצליחה
-                if (!fetchResponse.ok) {
-                    let responseText = await fetchResponse.text();
-                    setMessage(responseText);
-                    throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-                }
-                //JSON -ממיר את התגובה ל
-                const dataJSON = await fetchResponse.json();
-                setMessage("Success"); //TEMP
-                setData(dataJSON);
-                // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
-                dataJSON.meals.forEach((meal, index) => {
-                    if (meal != null) {
-                        console.log("firstMealList: " + JSON.stringify(firstMealProducts))
-                        // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
-                        // על מנת להעזר בה בלדעת את מחיר המוצר
-                        const filter_firstMeal = firstMealProducts.filter(item => item.name === meal.firstMeal);
-                        const filter_secondMeal = secondMealProducts.filter(item => item.name === meal.secondMeal);
-                        console.log("filtered..." + JSON.stringify(filter_firstMeal))
-                        console.log("filtered..." + filter_firstMeal[0].price)
-                        // מעדכן את המצב של הארוחות והמחיר
-                        const option = `option${index + 1}`;
-                        handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
-                        handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
-                        handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
-
-                        let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price) * meal.amount;
-                        handleChange({ target: { name: `${option}.price`, value: totalPrice } });
-                    }
-                });
-            } catch (error) {
-                // מדפיס שגיאה אם יש
-                console.error(error);
-            }
-        }
         checkLogin();
         fetch_findProductByCategory("First Meal");
+    }, []); // מערך ריק פירושו שהאפקט הזה פועל פעם אחת בהעלעת העמוד
+
+    useEffect(() => {
+        console.log('firstMealProducts updated:', firstMealProducts);
         fetch_findProductByCategory("Second Meal");
+    }, [firstMealProducts]); // This effect runs whenever firstMealProducts changes
+
+    useEffect(() => {
+        console.log('secondMealProducts updated:', secondMealProducts);
         console.log("Event ID: " + query_eventid);
         fetchData(query_eventid)
-    }, []); // מערך ריק פירושו שהאפקט הזה פועל פעם אחת בהעלעת העמוד
+    }, [secondMealProducts]); // This effect runs whenever secondMealProducts changes
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -183,6 +192,7 @@ function MyForm() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
+            fetchData(query_eventid)
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -201,7 +211,6 @@ function MyForm() {
                                 <option value={item.value}>{item.label}</option>
                             ))}
                         </select>
-                        {/*<input type="text" name="option1.firstMeal" value={formData.option1.firstMeal} onChange={handleChange} />*/}
                     </label>
                     <label>
                         Second Meal:
@@ -301,4 +310,4 @@ function MyForm() {
     );
 }
 
-export default MyForm;
+export default SelectAMeal;
