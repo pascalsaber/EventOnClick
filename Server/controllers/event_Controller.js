@@ -152,6 +152,7 @@ exports.updateMeals = async (request, result) => {
         Object.keys(formData).forEach(options => {
             newMeals.push(formData[options]);
         });
+        
         let progress = await Event.findByIdAndUpdate(
             event._id, // ID של האירוע לעדכון
             { meals: newMeals },
