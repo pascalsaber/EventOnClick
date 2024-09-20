@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // ודא שהייבוא נכון
+import { useNavigate } from 'react-router-dom'; 
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 
@@ -39,8 +39,10 @@ function MyForm() {
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
-
+    // useEffect- קומפוננטה המופעלת לאחר פעולה שמתבצעת 
+    // במקרה הזה זה קורה פעם אחת כשמעלים את העמוד 
     useEffect(() => {
+        //  מוודא שהתוקן של המשתמש עדיין בתוקף אחרת מחזירה את המשתמש לעמוד ההתחברות מחדש
         function checkLogin() {
             if (!token)
                 navigate("/login");
@@ -71,6 +73,7 @@ function MyForm() {
                 responseJSON.map((item) => {
                     list.push({
                         value: item.name,
+                        // מה שיוצג למשתמש ברשימת הבחירה
                         label: [`${item.name} (${item.price}₪)`]
                     });
                 });
@@ -113,11 +116,8 @@ function MyForm() {
                 dataJSON.meals.forEach((meal, index) => {
                     if (meal != null) {
                         console.log("firstMealList: " + JSON.stringify(firstMealProducts))
-                        //const filtered_FirstMealList = firstMealList.filter(item => item.name.includes(meal.firstMeal));
-                        //const filtered_SecondMealList = secondMealList.filter(item => item.name.includes(meal.secondMeal));
-                        //console.log("filtered_FirstMealList: " + [filtered_FirstMealList])
-                        
                         // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
+                        // על מנת להעזר בה בלדעת את מחיר המוצר
                         const filter_firstMeal = firstMealProducts.filter(item => item.name === meal.firstMeal);
                         const filter_secondMeal = secondMealProducts.filter(item => item.name === meal.secondMeal);
                         console.log("filtered..." + JSON.stringify(filter_firstMeal))
@@ -127,6 +127,7 @@ function MyForm() {
                         handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
                         handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
                         handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
+
                         let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price) * meal.amount;
                         handleChange({ target: { name: `${option}.price`, value: totalPrice } });
                     }
@@ -141,7 +142,7 @@ function MyForm() {
         fetch_findProductByCategory("Second Meal");
         console.log("Event ID: " + query_eventid);
         fetchData(query_eventid)
-    }, []);
+    }, []); // מערך ריק פירושו שהאפקט הזה פועל פעם אחת בהעלעת העמוד
 
     const handleChange = (e) => {
         const { name, value } = e.target;
