@@ -1,5 +1,3 @@
-// auth.js
-
 const jwt = require('jsonwebtoken'); // ייבוא מודל על מנת לפענוח ואימות טוקנים
 const User = require('../db/models/user'); // Adjust the path as needed
 
@@ -13,7 +11,7 @@ const authenticateToken = async (request, result, next) => {
         if (!data) {
             return result.status(401).send('No such ID in the database.'); // Send 401 if no user found
         }
-        request.user = data; // Attach user data to request object
+        request.userData = data; // Attach user data to request object
         next(); // Proceed to the next middleware or route handler
     } catch (error) {
         result.status(401).send('Invalid token.'); // Send 401 if token is invalid

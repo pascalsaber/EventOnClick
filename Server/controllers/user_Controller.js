@@ -74,43 +74,18 @@ exports.login = async (request, result) => {
     }
 }
 
-
+// מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
 exports.profile = [
     authenticateToken, // Use the middleware
     async (request, result) => {
         try {
-            // The user data is now available in req.user
-            const data = request.user;
-
-            // Handle the verified data (e.g., user ID)
+            const userData = request.userData;
             result.json({ data });
         } catch (error) {
             result.status(500).json({ message: 'An error occurred while fetching the profile data.' });
         }
     }
 ];
-
-// מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
-exports.profile1 = async (request, result) => {
-    try {
-        // ייבוא מודל על מנת לפענוח ואימות טוקנים
-        const jwt = require('jsonwebtoken');
-        // ככה מבצעים חילוץ הטוקן מהכותרת של הבקשה
-        const token = request.headers.authorization.split(' ')[1]; // Extract token from header
-        //GLOBAL_TOKEN_SECRET מפענחת ומאמתת את הטוקן באמצעות המפתח הסודי שנמצא במשתנה הסביבה
-        const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
-        // חיפוש המשתמש במסד הנתונים לפי ה-אידי ושמירה 
-        const data = await User.findOne({ _id: decoded._id });
-        if (!data) {
-            //סטטוס 401 מציין שהבקשה לא הצליחה מכיוון חסר אישורי אימות 
-            return result.status(401).send('No such ID in the database.'); //throw new Error
-        }
-        // Handle the verified data (e.g., user ID)
-        result.json({ decoded, data });
-    } catch (error) {
-        result.status(401).json({ message: 'Invalid token' });
-    }
-}
 
 exports.updateUserByID = async (request, result) => {
     try {
