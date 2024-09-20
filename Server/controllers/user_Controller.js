@@ -76,18 +76,30 @@ exports.login = async (request, result) => {
 
 // מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
 exports.profile = [
-    authenticateToken, // Use the middleware
+    authenticateToken, // Middleware
     async (request, result) => {
         try {
             const userData = request.userData;
-            result.json({ data });
+            result.json({ userData });
         } catch (error) {
-            result.status(500).json({ message: 'An error occurred while fetching the profile data.' });
+            result.status(500).json({ message: 'An error occurred while fetching.' });
         }
     }
 ];
 
-exports.updateUserByID = async (request, result) => {
+exports.updateUserByID = [
+    authenticateToken, // Middleware
+    async (request, result) => {
+        try {
+            const userData = request.userData;
+            result.json(request);
+        } catch (error) {
+            result.status(500).json({ message: 'An error occurred while fetching.' });
+        }
+    }
+];
+
+exports.updateUserByID1 = async (request, result) => {
     try {
         const req_id = request.query.id;
         const req_password = request.query.password;
