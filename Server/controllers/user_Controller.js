@@ -2,6 +2,7 @@
 const User = require("../db/models/user.js");
 const bcrypt = require('bcryptjs');
 const Event = require("../db/models/event.js");
+const authenticateToken = require('./auth'); // Adjust the path as needed
 
 //פונקציה אסינכרונית שמטרתה לרשום משתמש למערכת כולל הצפנת המידע ויצירת סיסמה מוצפנת יחודית למשתמש 
 exports.register = async (request, result) => {
@@ -72,8 +73,25 @@ exports.login = async (request, result) => {
         result.status(500).send('[Error] [#0010] ' + error.message);
     }
 }
+
+
+exports.profile = [
+    authenticateToken, // Use the middleware
+    async (request, result) => {
+        try {
+            // The user data is now available in req.user
+            const data = request.user;
+
+            // Handle the verified data (e.g., user ID)
+            result.json({ data });
+        } catch (error) {
+            result.status(500).json({ message: 'An error occurred while fetching the profile data.' });
+        }
+    }
+];
+
 // מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
-exports.profile = async (request, result) => {
+exports.profile1 = async (request, result) => {
     try {
         // ייבוא מודל על מנת לפענוח ואימות טוקנים
         const jwt = require('jsonwebtoken');
@@ -83,12 +101,10 @@ exports.profile = async (request, result) => {
         const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
         // חיפוש המשתמש במסד הנתונים לפי ה-אידי ושמירה 
         const data = await User.findOne({ _id: decoded._id });
-
         if (!data) {
             //סטטוס 401 מציין שהבקשה לא הצליחה מכיוון חסר אישורי אימות 
             return result.status(401).send('No such ID in the database.'); //throw new Error
         }
-
         // Handle the verified data (e.g., user ID)
         result.json({ decoded, data });
     } catch (error) {

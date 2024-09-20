@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
@@ -12,6 +13,7 @@ const MainContent = styled.div`
 `;
 
 function Register() {
+    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
@@ -26,6 +28,10 @@ function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
+            setData(null);
+            if (inputs.password != inputs.retypePassword) //בדיקה שהסיסמא זהה בשתי השדות
+                return setMessage("Password do not match.");
+
             const fetchResponse = await fetch("http://localhost:5000/user/register", {
                 method: "POST",
                 headers: {
@@ -49,8 +55,13 @@ function Register() {
                 throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
             const dataJSON = await fetchResponse.json();
-            setMessage("Success");
-            setData([dataJSON]);
+            setMessage("ההרשמה בוצעה בהצלה, בעוד 10 שניות תועבר לעמוד ההתחברות.");
+
+            setTimeout(() => {
+                navigate("/login");
+            }, 10000);
+
+            //setData([dataJSON]);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -81,9 +92,21 @@ function Register() {
                             <Form.Control
                                 size="sm"
                                 placeholder=""
-                                type="text"
+                                type="password"
                                 name="password"
                                 value={inputs.password || ""}
+                                onChange={handleChange} />
+                        </Col>
+                    </Form.Group>
+                    <Form.Group as={Row} className="mb-1">
+                        <Form.Label column sm="2">Retype Password</Form.Label>
+                        <Col sm="10">
+                            <Form.Control
+                                size="sm"
+                                placeholder=""
+                                type="password"
+                                name="retypePassword"
+                                value={inputs.retypePassword || ""}
                                 onChange={handleChange} />
                         </Col>
                     </Form.Group>
