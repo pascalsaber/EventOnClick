@@ -51,7 +51,7 @@ function Login() {
             setMessage("Success"); //TEMP
             setData([dataJSON.data]); //TEMP
             localStorage.setItem("jwt-token", dataJSON.token);
-            navigate("/profile");
+            navigate("/allEvents");
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }

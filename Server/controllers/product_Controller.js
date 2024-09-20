@@ -93,3 +93,15 @@ exports.returnEnumListByType = async (request, result) => {
         result.status(500).send(error.message);
     }
 }
+exports.returnArryByCategory = async (request, result) => {
+    try {
+        let toReturn = [];
+        let list = await Product.find({ category: request.query.category });
+        list.map(item => {
+            toReturn.push(item.name);
+        })
+        result.send(toReturn);
+    } catch (error) {
+        result.status(500).send(error.message);
+    }
+}

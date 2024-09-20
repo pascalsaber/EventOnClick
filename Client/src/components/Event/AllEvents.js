@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import Table from 'react-bootstrap/Table';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -54,29 +55,37 @@ function AllEvents() {
         <div>
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
-                <div>
-                    <br></br>
+                <br></br>
+                <form class="form">
+                    <Table striped bordered hover size="sm">
+                        <thead>
+                            <tr>
+                                <th>Edit</th>
+                                <th>Name</th>
+                                <th>Date</th>
+                                <th>Location</th>
+                                <th>Type</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        {data ? data.map((item, index) => (
+                            <tbody>
+                                <tr>
+                                    <td><button style={{ width: "50px" }} onClick={() => navigate(`/SelectAMeal?eventid=${item._id}`)}>Edit</button></td>
+                                    <td>{item.name}</td>
+                                    <td>{item.date}</td>
+                                    <td>{item.location}</td>
+                                    <td>{item.type}</td>
+                                    <td>{item.notes}</td>
+                                </tr>
+                            </tbody>
+                        )) : <p>Loading...</p>
+                        }
+                    </Table>
                     <p>[STATUS] {status}</p>
                     <p>[MESSAGE] {message}</p>
-                    <p>[JSON] {JSON.stringify(data)}</p>
-                    {data ? data.map((item, index) => (
-                        <form>
-                            <table style={{ width: '100%' }}>
-                                <tr>
-                                    <td style={{ width: "100px" }}>Index: {index}</td>
-                                    <td style={{ width: "100px" }}>ID: {item._id}</td>
-                                    <td style={{ width: "100px" }}>UserID: {item.userID}</td>
-                                    <td style={{ width: "100px" }}>Name: {item.name}</td>
-                                    <td style={{ width: "100px" }}>Date: {item.date}</td>
-                                    <td style={{ width: "100px" }}>Location: {item.location}</td>
-                                    <td style={{ width: "100px" }}>Type: {item.type}</td>
-                                    <td style={{ width: "100px" }}>notes: {item.notes}</td>
-                                </tr>
-                            </table>
-                        </form>
-                    )) : <p>Loading...</p>
-                    }
-                </div>
+                    {/*<p>[JSON] {JSON.stringify(data)}</p>*/}
+                </form>
             </MainContent>
         </div >
     );

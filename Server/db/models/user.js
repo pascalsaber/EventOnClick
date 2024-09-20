@@ -46,6 +46,11 @@ const userSchema = new Schema({
                 throw new Error(`Invalid email format: ${value}`);
         }
     },
+    status: {
+        type: Number,
+        trim: true,
+        required: true,
+    }
     //events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
 });
 
@@ -56,6 +61,7 @@ userSchema.methods.generateToken = async function () {
         signInTime: Date.now(),
         _id: this._id,
         username: this.username
+
     }
     const token = jwt.sign(data, process.env.GLOBAL_TOKEN_SECRET, { expiresIn: '1 hour' }); //1800s - 30 minutes
     //user.tokens.push({ token }); //הוספה למערך במקום האחרון

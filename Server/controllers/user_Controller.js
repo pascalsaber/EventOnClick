@@ -7,7 +7,7 @@ const Event = require("../db/models/event.js");
 exports.register = async (request, result) => {
     try {
         //יצירת אובייקט מסוג משתמש מבוסס על מידע שהתקבל בבקשה
-        const newUser = new User(request.body); 
+        const newUser = new User(request.body);
         // בודקת אם שם המשתמש כבר קיים במסד הנתונים
         const username_taken = await User.findOne({ username: newUser.username });
         //אם שם המשתמש תפוס
@@ -31,7 +31,7 @@ exports.register = async (request, result) => {
         //שומרת את המשתמש החדש במסד הנתונים ושולחת את התוצאה ללקוח
         const progress = await newUser.save();
         result.send(progress);
-       // במקרה של שגיאה, מחזירה הודעת שגיאה עם סטטוס 500 
+        // במקרה של שגיאה, מחזירה הודעת שגיאה עם סטטוס 500 
     } catch (error) {
         result.status(500).send(error.message);
     }
@@ -63,7 +63,7 @@ exports.login = async (request, result) => {
         if (!isValid) {
             return result.status(401).send('Wrong password.'); //throw new Error
         }
-       //יוצרת טוקן אימות עבור המשתמש שמכל את האידי של המשתמש ומוצפן באמצעות מפתח סודי
+        //יוצרת טוקן אימות עבור המשתמש שמכל את האידי של המשתמש ומוצפן באמצעות מפתח סודי
         let token = await data.generateToken();
         // שולחים את הטוקן בצורת אובייקט למשתמש 
         result.send({ token });
@@ -74,9 +74,9 @@ exports.login = async (request, result) => {
 }
 // מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
 exports.profile = async (request, result) => {
-    // ייבוא מודל על מנת לפענוח ואימות טוקנים
-    const jwt = require('jsonwebtoken');
     try {
+        // ייבוא מודל על מנת לפענוח ואימות טוקנים
+        const jwt = require('jsonwebtoken');
         // ככה מבצעים חילוץ הטוקן מהכותרת של הבקשה
         const token = request.headers.authorization.split(' ')[1]; // Extract token from header
         //GLOBAL_TOKEN_SECRET מפענחת ומאמתת את הטוקן באמצעות המפתח הסודי שנמצא במשתנה הסביבה

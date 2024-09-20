@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MealSchema = new Schema({
-
     firstMeal: {
         type: String,
         required: true
@@ -21,7 +20,7 @@ const MealSchema = new Schema({
         type: Number,
         trim: true,
         required: true,
-        min: 18
+        min: 1
     }
 });
 

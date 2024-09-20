@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const Meal = require('./meal')
+const MealSchema = require('./meal')
 
 const enumLocation = ["Inside the Hall", "Outside the Hall"];
 const enumType = ["Party", "Wedding", "Bar/Bat Mitzvah"];
@@ -34,7 +34,8 @@ const EventSchema = new Schema({
         maxlength: 500,
     },
     meals: [{
-        type: Meal
+        type: MealSchema,
+        required: true
     }]
 });
 
@@ -84,6 +85,25 @@ EventSchema.statics.validDate = async function (yourDate) {
         console.log('התאריך פנוי');
     }
 };
+/*EventSchema.methods.getFirstMeals = function() {
+    if (!this.meals) {
+        return []; // מחזיר מערך ריק אם meals לא מוגדר
+    }
+    return this.meals
+        .filter(meal => meal !== null && meal !== undefined) // סינון אובייקטים null או undefined
+        .map(meal => meal.firstMeal);
+};*/
+EventSchema.methods.getMealsByField = function(field) {
+    if (!this.meals) {
+        return []; // מחזיר מערך ריק אם meals לא מוגדר
+    }
+    return this.meals
+        .filter(meal => meal !== null && meal !== undefined) // סינון אובייקטים null או undefined
+        .map(meal => meal[field]);
+};
+
+
+
 
 
 const EventData = mongoose.model('Event', EventSchema);

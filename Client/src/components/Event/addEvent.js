@@ -82,11 +82,12 @@ function AddEvent() {
                 setMessage(responseText);
                 throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
-
+            // מכיל את המידע שחוזר מהאקספרס שהוא בעצם האירוע החדש שיצרנו
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
-            setData([dataJSON]);
-            navigate("/selectAMeal"); 
+            //setData([dataJSON]);
+            //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
+            navigate(`/selectAMeal?eventid=${dataJSON._id}`); //Maroun 
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
