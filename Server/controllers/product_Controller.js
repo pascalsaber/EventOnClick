@@ -66,7 +66,7 @@ exports.deleteProductByID = async (request, result) => {
     }
 }
 // הצגת רשימת המוצרים מלאה או לפי קטגוריה מסווימת 
-exports.findProduct = async (request, result) => {
+exports.findProductByCategory = async (request, result) => {
     try {
         let data = null
         let category = request.body.category

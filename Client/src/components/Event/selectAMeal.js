@@ -16,7 +16,6 @@ function MyForm() {
     const [status, setStatus] = useState(""); // עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); // עבור הודעה שיצרנו שמתקבלת בפניה לשרת
 
-
     const initialFormData = {};
     for (let i = 1; i <= 4; i++) {
         initialFormData[`option${i}`] = {
@@ -28,11 +27,13 @@ function MyForm() {
     }
     const [formData, setFormData] = useState(initialFormData); // עבור התיבות בחירה
 
+    //מכיל את כל המידע של המוצרים בקטגוריה של מנה ראשית
+    const [firstMealProducts, setFirstMealProducts] = useState([]) 
+    const [secondMealProducts, setSecondMealProducts] = useState([])
 
     const [firstMealList, setFirstMealList] = useState([{ value: "", label: "Error Loading from Database..." }])
     const [secondMealList, setSecondMealList] = useState([{ value: "", label: "Error Loading from Database..." }])
 
-    //NEW
     //window.location.search - (?eventID=abc&name=bbb לדוגמה )מכילה את החלק שאני שולחת בניתוב במקרה שלי אני יקבל 
     // URLSearchParams - הצבת הערך שמתקבל בבנאי זה על מנת לשלוף ולעדכין מאת המידע בצורה מסודרת 
     const queryParameters = new URLSearchParams(window.location.search)
@@ -44,26 +45,51 @@ function MyForm() {
             if (!token)
                 navigate("/login");
         }
-        async function fetch_enum(category) {
-            const fetchResponse = await fetch(`http://localhost:5000/product/returnArryByCategory?category=${category}`);
+        // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
+        async function fetch_findProductByCategory(category) {
+            //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
+            const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
+                method: "POST", // שיטה הפניה
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+                },
+                body: JSON.stringify(
+                    { //JSON המרת המידע שנשלח כגוף הבקשה ל
+                        //הקטגוריה שנבחרה
+                        category: category
+                    })
+            });
+            // בודק אם הבקשה הצליחה
             if (fetchResponse.ok) {
+                //JSON- ממיר את התגובה ל
                 let responseJSON = await fetchResponse.json();
                 console.log("responseJSON: " + responseJSON);
+                // יוצר רשימה חדשה עם אפשרות בחירה ריקה
                 let list = [{ value: "", label: "Select..." }];
+                // ממפה את המוצרים לרשימה עם שם ומחיר
                 responseJSON.map((item) => {
                     list.push({
-                        value: item,
-                        label: item
+                        value: item.name,
+                        label: [`${item.name} (${item.price}₪)`]
                     });
                 });
-                if (category == "First Meal")
+                if (category == "First Meal"){
+                    // מכיל את הרשימה שתוצג בתפריט הבחירה של מוצרים של מנות ראשונות
                     setFirstMealList(list);
-                else if (category == "Second Meal")
+                    // מכיל את הרשימה המלאה של המוצרים שהם מנות ראשונות
+                    setFirstMealProducts(responseJSON);
+                }                 
+                else if (category == "Second Meal"){
                     setSecondMealList(list);
+                    setSecondMealProducts(responseJSON);
+                }    
             }
         }
+        // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
         async function fetchData(eventID) {
             try {
+                //eventID לשרת עם get שולח בקשת 
                 const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, {
                     method: "GET",
                     headers: {
@@ -71,32 +97,48 @@ function MyForm() {
                         'Authorization': `Bearer ${token}`
                     }
                 });
+                // מעדכן את הסטטוס של הבקשה
                 setStatus(`${fetchResponse.status}`);
+                // בודק אם הבקשה לא הצליחה
                 if (!fetchResponse.ok) {
                     let responseText = await fetchResponse.text();
                     setMessage(responseText);
                     throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
                 }
+                //JSON -ממיר את התגובה ל
                 const dataJSON = await fetchResponse.json();
                 setMessage("Success"); //TEMP
                 setData(dataJSON);
-
+                // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
                 dataJSON.meals.forEach((meal, index) => {
                     if (meal != null) {
+                        console.log("firstMealList: " + JSON.stringify(firstMealProducts))
+                        //const filtered_FirstMealList = firstMealList.filter(item => item.name.includes(meal.firstMeal));
+                        //const filtered_SecondMealList = secondMealList.filter(item => item.name.includes(meal.secondMeal));
+                        //console.log("filtered_FirstMealList: " + [filtered_FirstMealList])
+                        
+                        // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
+                        const filter_firstMeal = firstMealProducts.filter(item => item.name === meal.firstMeal);
+                        const filter_secondMeal = secondMealProducts.filter(item => item.name === meal.secondMeal);
+                        console.log("filtered..." + JSON.stringify(filter_firstMeal))
+                        console.log("filtered..." + filter_firstMeal[0].price)
+                        // מעדכן את המצב של הארוחות והמחיר
                         const option = `option${index + 1}`;
                         handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
                         handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
                         handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
-                        handleChange({ target: { name: `${option}.price`, value: meal.price } });
+                        let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price) * meal.amount;
+                        handleChange({ target: { name: `${option}.price`, value: totalPrice } });
                     }
                 });
             } catch (error) {
+                // מדפיס שגיאה אם יש
                 console.error(error);
             }
         }
         checkLogin();
-        fetch_enum("First Meal");
-        fetch_enum("Second Meal");
+        fetch_findProductByCategory("First Meal");
+        fetch_findProductByCategory("Second Meal");
         console.log("Event ID: " + query_eventid);
         fetchData(query_eventid)
     }, []);
@@ -129,7 +171,6 @@ function MyForm() {
                         meals: JSON.stringify({ formData })
                     })
             });
-
             setData(null);
             setStatus(`${fetchResponse.status}`);
             //ok אם הסטטוס שונה מ200 שהוא
@@ -138,7 +179,6 @@ function MyForm() {
                 setMessage(responseText);
                 throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
-
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
@@ -146,7 +186,6 @@ function MyForm() {
             console.error(`[HandleSubmit Error] ${error}`);
         }
     }
-
     return (
         <div>
             <Menu /> {/* Here's your Menu component */}
@@ -176,10 +215,9 @@ function MyForm() {
                         <input type="number" name="option1.amount" value={formData.option1.amount} onChange={handleChange} />
                     </label>
                     <label>
-                        Price:
-                        <input type="number" name="option1.price" value={formData.option1.price} onChange={handleChange} />
+                        Total Price:
+                        <input disabled type="number" name="option1.price" value={formData.option1.price} />
                     </label>
-
                     <h5>Option 2</h5>
                     <label>
                         First Meal:
@@ -200,8 +238,8 @@ function MyForm() {
                         <input type="number" name="option2.amount" value={formData.option2.amount} onChange={handleChange} />
                     </label>
                     <label>
-                        Price:
-                        <input type="number" name="option2.price" value={formData.option2.price} onChange={handleChange} />
+                        Total Price:
+                        <input disabled type="number" name="option2.price" value={formData.option2.price} />
                     </label>
                     <h5>Option 3</h5>
                     <label>
@@ -223,8 +261,8 @@ function MyForm() {
                         <input type="number" name="option3.amount" value={formData.option3.amount} onChange={handleChange} />
                     </label>
                     <label>
-                        Price:
-                        <input type="number" name="option3.price" value={formData.option3.price} onChange={handleChange} />
+                        Total Price:
+                        <input disabled type="number" name="option3.price" value={formData.option3.price} />
                     </label>
                     <h5>Option 4</h5>
                     <label>
@@ -246,8 +284,8 @@ function MyForm() {
                         <input type="number" name="option4.amount" value={formData.option4.amount} onChange={handleChange} />
                     </label>
                     <label>
-                        Price:
-                        <input type="number" name="option4.price" value={formData.option4.price} onChange={handleChange} />
+                        Total Price:
+                        <input disabled type="number" name="option4.price" value={formData.option4.price} />
                     </label>
                     <input type="submit" value="Update" />
                     <div>
