@@ -28,10 +28,10 @@ function Profile() {
                 },
                 body: JSON.stringify({ // המרת המידעה שנשלח כבדי מהטופס לאקספרס
                     // האינפוט הוא המידעה שנרשם בטופס
-                    username: inputs.username,
                     firstName: inputs.firstName,
                     lastName: inputs.lastName,
                     email: inputs.email,
+                    password: inputs.password
                 })
             });
 
@@ -100,6 +100,7 @@ function Profile() {
                     <label>Username</label>
                     <input
                         disabled
+                        required
                         type="text"
                         name="username"
                         value={inputs.username || ""}
@@ -108,6 +109,7 @@ function Profile() {
                     />
                     <label>Password</label>
                     <input
+                        required
                         type="password"
                         name="password"
                         value={inputs.password || ""}
@@ -116,6 +118,7 @@ function Profile() {
                     />
                     <label>Retype Password</label>
                     <input
+                        required
                         type="password"
                         name="retypePassword"
                         value={inputs.retypePassword || ""}
@@ -124,6 +127,7 @@ function Profile() {
                     />
                     <label>First Name</label>
                     <input
+                        required
                         type="text"
                         name="firstName"
                         value={inputs.firstName || ""}
@@ -132,6 +136,7 @@ function Profile() {
                     />
                     <label>Last Name</label>
                     <input
+                        required
                         type="text"
                         name="lastName"
                         value={inputs.lastName || ""}
@@ -140,6 +145,7 @@ function Profile() {
                     />
                     <label>Email</label>
                     <input
+                        required
                         type="text"
                         name="email"
                         value={inputs.email || ""}
