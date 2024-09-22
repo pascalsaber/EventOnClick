@@ -95,7 +95,7 @@ exports.updateUserByID = [authenticateToken, // Middleware
                 return result.status(404).send('Password is not strong.');
             userData.password = encryptPassword(userData.password); //הצפנת סיסמא
 
-            if (userData.email != request.body.email) {
+            if (userData.email != request.body.email) { //כדי להימנע מבדיקה של מייל זה מכיוון והוא בשימוש
                 const email_taken = await User.findOne({ email: request.body.email });
                 //אם שם המשתמש תפוס
                 if (email_taken)
@@ -107,7 +107,7 @@ exports.updateUserByID = [authenticateToken, // Middleware
                 userData._id,
                 {
                     firstName: request.body.firstName,
-                    lastNAme: request.body.lastName,
+                    lastName: request.body.lastName,
                     password: userData.password,
                     email: request.body.email
                 },
