@@ -9,6 +9,12 @@ const MainContent = styled.div`
 `;
 
 function AddEvent() {
+    //window.location.search - (?eventID=abc&name=bbb לדוגמה )מכילה את החלק שאני שולחת בניתוב במקרה שלי אני יקבל 
+    // URLSearchParams - הצבת הערך שמתקבל בבנאי זה על מנת לשלוף ולעדכין מאת המידע בצורה מסודרת 
+    const queryParameters = new URLSearchParams(window.location.search)
+    // שליפת הערך של איבנת אי די ושמירתו במשתנה 
+    const query_eventid = queryParameters.get("eventid")
+
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
@@ -20,6 +26,36 @@ function AddEvent() {
     const [enumLocationList, setEnumLocationList] = useState([{ value: "", label: "Error Loading from Database..." }])
     const [enumTypeList, setEnumTypeList] = useState([{ value: "", label: "Error Loading from Database..." }])
 
+    useEffect(() => {
+        async function fetchEventByID() {
+            try {
+                //eventID לשרת עם get שולח בקשת 
+                const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${query_eventid}`, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                // מעדכן את הסטטוס של הבקשה
+                setStatus(`${fetchResponse.status}`);
+                // בודק אם הבקשה לא הצליחה
+                if (!fetchResponse.ok) {
+                    let responseText = await fetchResponse.text();
+                    setMessage(responseText);
+                    throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
+                }
+                //JSON -ממיר את התגובה ל
+                const dataJSON = await fetchResponse.json();
+                setMessage("Success");
+                setData(dataJSON);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        if (query_eventid)
+            fetchEventByID();
+    }, [enumTypeList]);
 
     useEffect(() => {
         function checkLogin() {
