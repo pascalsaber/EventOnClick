@@ -49,6 +49,7 @@ function AddEvent() {
                 const dataJSON = await fetchResponse.json();
                 setMessage("Success");
                 setData(dataJSON);
+                setInputs(dataJSON);
             } catch (error) {
                 console.error(error);
             }
@@ -92,8 +93,11 @@ function AddEvent() {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
+        let URL = "http://localhost:5000/event/add";
+        if (query_eventid)
+            URL = `http://localhost:5000/event/updateEventByID?eventid=${query_eventid}`;
         try {
-            const fetchResponse = await fetch("http://localhost:5000/event/add", { // לאיזה כתובת לפנות 
+            const fetchResponse = await fetch(URL, { // לאיזה כתובת לפנות 
                 method: "POST", // שיטה הפניה 
                 headers: {
                     "Content-Type": "application/json",
@@ -121,9 +125,8 @@ function AddEvent() {
             // מכיל את המידע שחוזר מהאקספרס שהוא בעצם האירוע החדש שיצרנו
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
-            //setData([dataJSON]);
+            setData([dataJSON]);
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
-            navigate(`/selectAMeal?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -137,6 +140,7 @@ function AddEvent() {
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <label>Name</label>
                     <input
+                        required
                         type="text"
                         name="name"
                         value={inputs.name || ""}
@@ -144,25 +148,27 @@ function AddEvent() {
                     />
                     <label>Date</label>
                     <input
+                        required
                         type="date"
                         name="date"
                         value={inputs.date || ""}
                         onChange={handleChange}
                     />
                     <label>Location</label>
-                    <select name="location" value={inputs.location} onChange={handleChange}>
+                    <select name="location" value={inputs.location} onChange={handleChange} required>
                         {enumLocationList.map((item) => (
                             <option value={item.value}>{item.label}</option>
                         ))}
                     </select>
                     <label>Type</label>
-                    <select name="type" value={inputs.type} onChange={handleChange}>
+                    <select name="type" value={inputs.type} onChange={handleChange} required>
                         {enumTypeList.map((item) => (
                             <option value={item.value}>{item.label}</option>
                         ))}
                     </select>
                     <label>Notes</label>
                     <input
+                        required
                         type="text"
                         name="notes"
                         value={inputs.notes || ""}
@@ -176,6 +182,8 @@ function AddEvent() {
                         onChange={handleChange}
                         /*required*/ />
                     <input type="submit" value="Login" />
+                    <button style={{ width: "100px" }} onClick={() => navigate(`/selectAMeal?eventid=${query_eventid}`)}>Next Page</button>
+           
                     <div>
                         <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>

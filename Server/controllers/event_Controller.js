@@ -121,6 +121,23 @@ exports.findOneEvent = async (request, result) => {
     }
 };
 
+exports.updateEventByID = [authenticateToken, async (request, result) => {
+    let event = await Event.findById({ _id: request.query.eventid }); //חיפוש אירוע לפי מפתח
+    if (!event) //לא נמצא אירוע
+        return result.status(401).send('No such Event ID in the database.'); //throw new Error
+
+    if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+        return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+
+    const data = request.body;
+    let progress = await Event.findByIdAndUpdate(
+        request.query.eventid, // ID של האירוע לעדכון
+        data,
+        { new: true } // מחזיר את המסמך המעודכן
+    );
+    result.send(progress);
+}];
+
 //   אמורה לקבל את האי די של האירוע 
 exports.updateMealsOrDecoration = [authenticateToken, async (request, result) => {
     try {

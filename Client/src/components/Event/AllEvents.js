@@ -90,7 +90,7 @@ function AllEvents() {
                         {data ? data.map((item, index) => (
                             <tbody>
                                 <tr>
-                                    <td><button style={{ width: "50px" }} onClick={() => navigate(`/SelectAMeal?eventid=${item._id}`)}>Edit</button></td>
+                                    <td><button style={{ width: "50px" }} onClick={() => navigate(`/addEvent?eventid=${item._id}`)}>Edit</button></td>
                                     <td>{item.name}</td>
                                     <td>{item.date}</td>
                                     <td>{item.location}</td>
