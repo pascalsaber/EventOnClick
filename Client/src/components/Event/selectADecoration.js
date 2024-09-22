@@ -8,7 +8,7 @@ const MainContent = styled.div`
     margin-left: 1%; // Adjust this value as needed
 `;
 
-function SelectAMeal() {
+function SelectADecoration() {
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
@@ -17,11 +17,12 @@ function SelectAMeal() {
     const [message, setMessage] = useState(""); // עבור הודעה שיצרנו שמתקבלת בפניה לשרת
 
     const initialFormData = {};
-    for (let i = 1; i <= 4; i++) {
+    for (let i = 1; i <= 2; i++) {
         initialFormData[`option${i}`] = {
-            firstMeal: '',
-            secondMeal: '',
-            salad: '',
+            table: '',
+            map: '',
+            extra1: '',
+            extra2: '',
             amount: '',
             price: ''
         };
@@ -38,7 +39,7 @@ function SelectAMeal() {
     const query_eventid = queryParameters.get("eventid")
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
-    async function fetch_findProductByCategory(category) {
+    async function fetch_findProductByCategory() {
         //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
         const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
             method: "POST", // שיטה הפניה
@@ -76,24 +77,26 @@ function SelectAMeal() {
             setMessage("Success"); //TEMP
             setData(dataJSON);
             // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
-            dataJSON.meals.forEach((meal, index) => {
-                if (meal != null) {
+            dataJSON.decorations.forEach((decoration, index) => {
+                if (decoration != null) {
                     // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
                     // על מנת להעזר בה בלדעת את מחיר המוצר
-                    if (meal.firstMeal == "" || meal.secondMeal == "" || meal.salad == "")
+                    if (decoration.table == "" || decoration.map == "" || decoration.extra1 == "" || decoration.extra2 == "")
                         return
-                    const filter_firstMeal = products.filter(item => item.name === meal.firstMeal);
-                    const filter_secondMeal = products.filter(item => item.name === meal.secondMeal);
-                    const filter_salad = products.filter(item => item.name === meal.salad);
-                    console.log("filtered..." + JSON.stringify(filter_firstMeal))
-                    console.log("filtered..." + filter_firstMeal[0].price)
+                    const filter_table = products.filter(item => item.name === decoration.table);
+                    const filter_map = products.filter(item => item.name === decoration.map);
+                    const filter_extra1 = products.filter(item => item.name === decoration.extra1);
+                    const filter_extra2 = products.filter(item => item.name === decoration.extra2);
+                    console.log("filtered..." + JSON.stringify(filter_table))
+                    console.log("filtered..." + filter_table[0].price)
                     // מעדכן את המצב של הארוחות והמחיר
                     const option = `option${index + 1}`;
-                    handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
-                    handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
-                    handleChange({ target: { name: `${option}.salad`, value: meal.salad } });
-                    handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
-                    let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
+                    handleChange({ target: { name: `${option}.table`, value: decoration.table } });
+                    handleChange({ target: { name: `${option}.map`, value: decoration.map } });
+                    handleChange({ target: { name: `${option}.extra1`, value: decoration.extra1 } });
+                    handleChange({ target: { name: `${option}.extra2`, value: decoration.extra2 } });
+                    handleChange({ target: { name: `${option}.amount`, value: decoration.amount } });
+                    let totalPrice = (filter_table[0].price + filter_map[0].price + filter_extra1[0].price + filter_extra2[0].price) * decoration.amount;
                     handleChange({ target: { name: `${option}.price`, value: totalPrice } });
                 }
             });
@@ -146,7 +149,7 @@ function SelectAMeal() {
                     { // המרת המידעה שנשלח כבדי מהטופס לאקספרס
                         // האינפוט הוא המידעה שנרשם בטופס
                         eventID: query_eventid,
-                        data: JSON.stringify({ meals: formData }),
+                        data: JSON.stringify({ decorations: formData }),
                     })
             });
             setData(null);
@@ -161,7 +164,6 @@ function SelectAMeal() {
             setMessage("Success");
             setData([dataJSON]);
             fetchData(query_eventid)
-            navigate(`/selectADecoration?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -174,33 +176,44 @@ function SelectAMeal() {
                 <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
                     <h5>Option 1</h5>
                     <label>
-                        First Meal:
-                        <select name="option1.firstMeal" value={formData.option1.firstMeal} onChange={handleChange} required>
+                        Table:
+                        <select name="option1.table" value={formData.option1.table} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "First Meal")
+                                .filter(item => item.category === "Table")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
                     <label>
-                        Second Meal:
-                        <select name="option1.secondMeal" value={formData.option1.secondMeal} onChange={handleChange} required>
+                        Map Color:
+                        <select name="option1.map" value={formData.option1.map} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "Second Meal")
+                                .filter(item => item.category === "Map")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
                     <label>
-                        Salad:
-                        <select name="option1.salad" value={formData.option1.salad} onChange={handleChange} required>
+                        Extra1:
+                        <select name="option1.extra1" value={formData.option1.extra1} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "Salad")
+                                .filter(item => item.category === "Extra1")
+                                .map(item => (
+                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                ))}
+                        </select>
+                    </label>
+                    <label>
+                        Extra2:
+                        <select name="option1.extra2" value={formData.option1.extra2} onChange={handleChange} required>
+                            <option value="">Select...</option>
+                            {products
+                                .filter(item => item.category === "Extra1")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
@@ -216,33 +229,44 @@ function SelectAMeal() {
                     </label>
                     <h5>Option 2</h5>
                     <label>
-                        First Meal:
-                        <select name="option2.firstMeal" value={formData.option2.firstMeal} onChange={handleChange} required>
+                        Table:
+                        <select name="option2.table" value={formData.option2.table} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "First Meal")
+                                .filter(item => item.category === "Table")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
                     <label>
-                        Second Meal:
-                        <select name="option2.secondMeal" value={formData.option2.secondMeal} onChange={handleChange} required>
+                        Map Color:
+                        <select name="option2.map" value={formData.option2.map} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "Second Meal")
+                                .filter(item => item.category === "Map")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
                     <label>
-                        Salad:
-                        <select name="option2.salad" value={formData.option2.salad} onChange={handleChange} required>
+                        Extra1:
+                        <select name="option2.extra1" value={formData.option2.extra1} onChange={handleChange} required>
                             <option value="">Select...</option>
                             {products
-                                .filter(item => item.category === "Salad")
+                                .filter(item => item.category === "Extra1")
+                                .map(item => (
+                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                ))}
+                        </select>
+                    </label>
+                    <label>
+                        Extra2:
+                        <select name="option2.extra2" value={formData.option2.extra2} onChange={handleChange} required>
+                            <option value="">Select...</option>
+                            {products
+                                .filter(item => item.category === "Extra1")
                                 .map(item => (
                                     <option value={item.name}>{item.name} ({item.price})₪</option>
                                 ))}
@@ -256,88 +280,7 @@ function SelectAMeal() {
                         Total Price:
                         <input disabled type="number" name="option2.price" value={formData.option2.price} />
                     </label>
-                    <h5>Option 3</h5>
-                    <label>
-                        First Meal:
-                        <select name="option3.firstMeal" value={formData.option3.firstMeal} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "First Meal")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select></label>
-                    <label>
-                        Second Meal:
-                        <select name="option3.secondMeal" value={formData.option3.secondMeal} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "Second Meal")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select>
-                    </label>
-                    <label>
-                        Salad:
-                        <select name="option3.salad" value={formData.option3.salad} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "Salad")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select>
-                    </label>
-                    <label>
-                        Amount:
-                        <input type="number" name="option3.amount" value={formData.option3.amount} onChange={handleChange} min="1" required />
-                    </label>
-                    <label>
-                        Total Price:
-                        <input disabled type="number" name="option3.price" value={formData.option3.price} />
-                    </label>
-                    <h5>Option 4</h5>
-                    <label>
-                        First Meal:
-                        <select name="option4.firstMeal" value={formData.option4.firstMeal} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "First Meal")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select></label>
-                    <label>
-                        Second Meal:
-                        <select name="option4.secondMeal" value={formData.option4.secondMeal} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "Second Meal")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select>
-                    </label>
-                    <label>
-                        Salad:
-                        <select name="option4.salad" value={formData.option4.salad} onChange={handleChange} required>
-                            <option value="">Select...</option>
-                            {products
-                                .filter(item => item.category === "Salad")
-                                .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
-                                ))}
-                        </select>
-                    </label>
-                    <label>
-                        Amount:
-                        <input type="number" name="option4.amount" value={formData.option4.amount} onChange={handleChange} min="1" required />
-                    </label>
-                    <label>
-                        Total Price:
-                        <input disabled type="number" name="option4.price" value={formData.option4.price} />
-                    </label>
+                 
                     <input type="submit" value="Update" />
                     <p>[MESSAGE] {message}</p>
                     {process.env.REACT_APP_TESTING === 'TRUE' ?
@@ -353,4 +296,4 @@ function SelectAMeal() {
     );
 }
 
-export default SelectAMeal;
+export default SelectADecoration;

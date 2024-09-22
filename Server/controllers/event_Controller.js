@@ -136,8 +136,8 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
         let formData = null //Meal || Decoration
         if (data.meals != null) {
             formData = data.meals;
-        } else if (data.decoration != null) {
-            formData = data.decoration;
+        } else if (data.decorations != null) {
+            formData = data.decorations;
         }
 
         let newList = [];
@@ -152,10 +152,10 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
                 { meals: newList },
                 { new: true } // מחזיר את המסמך המעודכן
             );
-        } else if (data.decoration != null) {
+        } else if (data.decorations != null) {
             progress = await Event.findByIdAndUpdate(
                 event._id, // ID של האירוע לעדכון
-                { decoration: newList },
+                { decorations: newList },
                 { new: true } // מחזיר את המסמך המעודכן
             );
         }

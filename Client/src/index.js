@@ -18,6 +18,7 @@ import FindUserByID from './components/Admin/findUserByID'
 // Event Components
 import AddEvent from './components/Event/addEvent'
 import SelectAMeal from './components/Event/selectAMeal.js'
+import SelectADecoration from './components/Event/selectADecoration.js'
 import AllEvents from "./components/Event/AllEvents";
 
 // Product Components
@@ -37,6 +38,7 @@ const router = createBrowserRouter(
       <Route path="/printall" element={<PrintAll />} />
       <Route path="/addEvent" element={<AddEvent />} />
       <Route path="/selectAMeal" element={<SelectAMeal />} />
+      <Route path="/selectADecoration" element={<SelectADecoration />} />
       {/*Product*/}
       <Route path="/allproducts" element={<AllProducts />} />
       {/*Admin*/}
