@@ -106,6 +106,7 @@ function AddEvent() {
                     location: inputs.location,
                     type: inputs.type,
                     notes: inputs.notes,
+                    status: inputs.status
                 })
             });
 
@@ -167,6 +168,13 @@ function AddEvent() {
                         value={inputs.notes || ""}
                         onChange={handleChange}
                     />
+                    <label>Status</label>
+                    <input
+                        type="text"
+                        name="status"
+                        value={inputs.status || ""}
+                        onChange={handleChange}
+                        /*required*/ />
                     <input type="submit" value="Login" />
                     <div>
                         <p>[STATUS] {status}</p>

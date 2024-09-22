@@ -39,8 +39,10 @@ const EventSchema = new Schema({
     }]*/
     meals: [MealSchema],
     decorations:[DecorationSchema],
-    //status:
-
+    status:{
+        type: String,
+        required: true
+    }
 });
 
 /*
