@@ -3,6 +3,14 @@ const bcrypt = require('bcryptjs');
 const Event = require("../db/models/event.js");
 const User = require("../db/models/user.js");
 
+function encryptPassword(password) {
+    const salt = bcrypt.genSaltSync(10); //מחרוזת אקראית בגודל 10 טווים עבור ההצפנה
+    // hash - את ההסיסמה המוצפנת שיש בתוכה את השילוב של הסימה המקורית והמחרוזת ההקראית שהמערכת יצרה
+    const hashPassword = bcrypt.hashSync(password, salt);
+    // מעדכנים את הסיסמה של המשתמש לאחר שהצפנו אותה 
+    return hashPassword;
+}
+
 //פונקציה אסינכרונית שמטרתה לרשום משתמש למערכת כולל הצפנת המידע ויצירת סיסמה מוצפנת יחודית למשתמש 
 exports.register = async (request, result) => {
     try {
@@ -14,21 +22,21 @@ exports.register = async (request, result) => {
         if (username_taken)
             // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
             return result.status(404).send('Username is taken.');
+
+        const email_taken = await User.findOne({ email: newUser.email });
+        //אם שם המשתמש תפוס
+        if (email_taken)
+            // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
+            return result.status(404).send('Email is taken.');
+
         // אם המשתמש לא נמצא אז אפשר ליצור אותו במערכת 
         // מתחילים לעשות בדיקות לסיסמה שהמשתמש נתן 
         // בודקת אם הסיסמה חזקה מספיק ועומדת בדרישות שבנינו בה תפונקציה בעמוד סכימת היוזיר
-        //
         let isStrongPassword = await newUser.isStrongPassword(); //MUST USE AWAIT!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //אם הסיסמה לא חזקה, מחזירה הודעת שגיאה עם סטטוס 404
         if (isStrongPassword == false)
             return result.status(404).send('Password is not strong.');
-
-        const salt = bcrypt.genSaltSync(10); //מחרוזת אקראית בגודל 10 טווים עבור ההצפנה
-        // hash - את ההסיסמה המוצפנת שיש בתוכה את השילוב של הסימה המקורית והמחרוזת ההקראית שהמערכת יצרה
-        const hashPassword = bcrypt.hashSync(newUser.password, salt);
-        // מעדכנים את הסיסמה של המשתמש לאחר שהצפנו אותה 
-        newUser.password = hashPassword;
-        //שומרת את המשתמש החדש במסד הנתונים ושולחת את התוצאה ללקוח
+        newUser.password = encryptPassword(newUser.password); //הצפנת סיסמא
         const progress = await newUser.save();
         result.send(progress);
         // במקרה של שגיאה, מחזירה הודעת שגיאה עם סטטוס 500 
@@ -77,8 +85,34 @@ exports.profile = [authenticateToken, // Middleware
 exports.updateUserByID = [authenticateToken, // Middleware
     async (request, result) => {
         try {
-            //const userData = request.userData;
-            result.json(request.body);
+            const userData = request.userData;
+            userData.password = request.body.password;
+            // מתחילים לעשות בדיקות לסיסמה שהמשתמש נתן 
+            // בודקת אם הסיסמה חזקה מספיק ועומדת בדרישות שבנינו בה תפונקציה בעמוד סכימת היוזיר
+            let isStrongPassword = await userData.isStrongPassword(); //MUST USE AWAIT!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //אם הסיסמה לא חזקה, מחזירה הודעת שגיאה עם סטטוס 404
+            if (isStrongPassword == false)
+                return result.status(404).send('Password is not strong.');
+            userData.password = encryptPassword(userData.password); //הצפנת סיסמא
+
+            if (userData.email != request.body.email) {
+                const email_taken = await User.findOne({ email: request.body.email });
+                //אם שם המשתמש תפוס
+                if (email_taken)
+                    // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
+                    return result.status(404).send('Email is taken.');
+            }
+
+            let progress = await User.findByIdAndUpdate(
+                userData._id,
+                {
+                    firstName: request.body.firstName,
+                    lastNAme: request.body.lastName,
+                    password: userData.password,
+                    email: request.body.email
+                },
+                { new: true })
+            result.json(progress);
         } catch (error) {
             result.status(500).json({ message: 'An error occurred while fetching: ' + error });
         }
