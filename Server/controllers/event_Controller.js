@@ -137,8 +137,6 @@ exports.updateEventByID = [authenticateToken, async (request, result) => {
     );
     result.send(progress);
 }];
-
-//   אמורה לקבל את האי די של האירוע 
 exports.updateMealsOrDecoration = [authenticateToken, async (request, result) => {
     try {
         let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
