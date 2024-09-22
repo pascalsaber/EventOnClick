@@ -83,6 +83,7 @@ function AllEvents() {
                                 <th>Location</th>
                                 <th>Type</th>
                                 <th>Notes</th>
+                                <th>Status</th>
                                 <th>Delete</th>
                             </tr>
                         </thead>
@@ -95,6 +96,7 @@ function AllEvents() {
                                     <td>{item.location}</td>
                                     <td>{item.type}</td>
                                     <td>{item.notes}</td>
+                                    <td>{item.status}</td>
                                     <td><button style={{ width: "50px" }} onClick={() => DeleteEvent(item._id)}>Delete</button></td>
                                 </tr>
                             </tbody>
