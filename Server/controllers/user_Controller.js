@@ -1,8 +1,7 @@
-
-const User = require("../db/models/user.js");
+const authenticateToken = require('./auth'); // Adjust the path as needed
 const bcrypt = require('bcryptjs');
 const Event = require("../db/models/event.js");
-const authenticateToken = require('./auth'); // Adjust the path as needed
+const User = require("../db/models/user.js");
 
 //פונקציה אסינכרונית שמטרתה לרשום משתמש למערכת כולל הצפנת המידע ויצירת סיסמה מוצפנת יחודית למשתמש 
 exports.register = async (request, result) => {
@@ -37,21 +36,6 @@ exports.register = async (request, result) => {
         result.status(500).send(error.message);
     }
 }
-// פונקציה שמוצאת את כל המשתמשים במסד הנתונים ושולחת את התוצאה ללקוח
-exports.printall = [
-    authenticateToken, // Middleware
-    async (request, result) => {
-        try {
-            const userData = request.userData;
-            if (userData.status == 0)
-                result.status(500).json({ message: 'Must be admin.' });
-
-            const allUsers = await User.find();
-            result.json(allUsers);
-        } catch (error) {
-            result.status(500).json({ message: 'An error occurred while fetching: ' + error });
-        }
-    }];
 
 // מטרת הפונקציה לאמת את פרטי ההתחברות של המשתמש (שם משתמש וסיסמה) וליצור טוקן אימות
 exports.login = async (request, result) => {
@@ -80,8 +64,7 @@ exports.login = async (request, result) => {
 }
 
 // מטרת הפונקציה היא לאמת את הטוקן שנשלח ע"י הלקוח ולשלוף את פרטי המשתמש ממסד הנתונים 
-exports.profile = [
-    authenticateToken, // Middleware
+exports.profile = [authenticateToken, // Middleware
     async (request, result) => {
         try {
             const userData = request.userData;
@@ -91,8 +74,7 @@ exports.profile = [
         }
     }];
 
-exports.updateUserByID = [
-    authenticateToken, // Middleware
+exports.updateUserByID = [authenticateToken, // Middleware
     async (request, result) => {
         try {
             //const userData = request.userData;
@@ -103,20 +85,39 @@ exports.updateUserByID = [
     }];
 
 // מטרת הפונקציה היא לחפש ולהחזיר משתמש מהמסד הנתונים לפי אידי שלו
-exports.findUserByID = async (request, result) => {
-    try {
-        // קבלת האידי של המשתמש לפי הבקשה והצוותו 
-        const id = request.query.id;
-        // חיפוש המשתמש לפי מיספר האידי שלו
-        const data = await User.findById(id);
-        //אם המשתמש לא נמצא מוחזרת שגיאה 
-        if (!data) {
-            return result.status(404).send('No data');
+exports.findUserByID = [authenticateToken, // Middleware
+    async (request, result) => {
+        try {
+            if (process.env.GLOBAL_TEST_MODE == 1) {
+                console.log("Request Query: " + JSON.stringify(request.query)) //From query or body
+                console.log("Request Body: " + JSON.stringify(request.body)) //From query or body
+                console.log("Request Params: " + JSON.stringify(request.params)) //From query or body
+                console.log("User Data: " + JSON.stringify(request.userData)) //From authenticateToken
+            }
+            if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
+                return result.status(404).send('Must be admin.');
+            // חיפוש המשתמש לפי מספר האידי שלו
+            const data = await User.findById(request.query.id);
+            //אם המשתמש לא נמצא מוחזרת שגיאה 
+            if (!data)
+                return result.status(404).send('No data');
+            result.send(data); // הפונקציה מחזירה את האובייקט של המשתמש
+        } catch (error) {
+            result.status(500).send(error.message);
         }
-        // אם המשתמש נמצא, הפונקציה מחזירה את האובייקט של המשתמש.
-        result.send(data);
-    } catch (error) {
-        result.status(500).send(error.message);
-    }
-}
+    }];
 
+// פונקציה שמוצאת את כל המשתמשים במסד הנתונים ושולחת את התוצאה ללקוח
+exports.printall = [authenticateToken, // Middleware
+    async (request, result) => {
+        try {
+            const userData = request.userData;
+            if (userData.status == 0)
+                return result.status(404).send('Must be admin.');
+
+            const allUsers = await User.find();
+            result.json(allUsers);
+        } catch (error) {
+            result.status(500).json({ message: 'An error occurred while fetching: ' + error });
+        }
+    }];

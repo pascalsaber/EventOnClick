@@ -1,4 +1,6 @@
 const Product = require("../db/models/product");
+const User = require("../db/models/user.js");
+const authenticateToken = require("./auth");
 // פונקציית הוספת מוצר
 exports.add = async (request, result) => {
     try {
@@ -19,8 +21,10 @@ exports.add = async (request, result) => {
     }
 }
 // פונקציית עדכון נתונים למוצר לפי המפתח היחודי שלו
-exports.updateProductByID = async (request, result) => {
+exports.updateProductByID =[authenticateToken, async (request, result) => {
     try {
+        if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
+                return result.status(404).send('Must be admin.');
         const req_id = request.body.id;
         let data = await Product.findById(req_id);
         if (!data) {
@@ -49,10 +53,12 @@ exports.updateProductByID = async (request, result) => {
         //סטטוס 500 אם אי אפשר לגשת לשרת
         result.status(500).send(error.message);
     }
-}
+}];
 // מחיקת מוצר מרקשימת המוצרים 
 exports.deleteProductByID = async (request, result) => {
     try {
+        if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
+                return result.status(404).send('Must be admin.');
         const req_id = request.body.id;
         const data = await Product.findByIdAndDelete(req_id);
         if (!data) {
@@ -71,13 +77,13 @@ exports.findProductByCategory = async (request, result) => {
         let data = null
         let category = request.body.category
         if (category == "" || category == null)
-            data = await Product.find();
+            data = await Product.find(); // מחזיר את כל המוצרים ללא סינון קטגוריות
         else
             data = await Product.find({ category: request.body.category });
         if (data.length === 0) {
             return result.status(401).send('אין בקטגוריה זו אף מוצר'); //throw new Error
         }
-        result.send(data);
+        result.json(data);
     } catch (error) {
         // במקרה ומתבצעת שגיאה באחת מהשלבים 
         //(שגיאת שרת פנימית) מחזירים הודעת שגיאה עם סטטוס 500
@@ -88,12 +94,13 @@ exports.returnEnumListByType = async (request, result) => {
     try {
         const product = new Product();
         let enumList = await product.enumRequest(request.query.type);
-        result.send(enumList);
+        result.send(enumList); //["First Meal", "Second Meal", "Salad", "Table"...];
     } catch (error) {
         result.status(500).send(error.message);
     }
 }
-exports.returnArryByCategory = async (request, result) => {
+
+/*exports.returnArryByCategory = async (request, result) => {
     try {
         let toReturn = [];
         let list = await Product.find({ category: request.query.category });
@@ -104,4 +111,4 @@ exports.returnArryByCategory = async (request, result) => {
     } catch (error) {
         result.status(500).send(error.message);
     }
-}
+}*/

@@ -7,5 +7,5 @@ router.post("/findProductByCategory", productController.findProductByCategory);
 router.post("/updateProductByID", productController.updateProductByID);
 router.post("/deleteProductByID", productController.deleteProductByID);
 router.get("/returnEnumListByType", productController.returnEnumListByType);
-router.get("/returnArryByCategory", productController.returnArryByCategory);
+//router.get("/returnArryByCategory", productController.returnArryByCategory);
 module.exports = router;

@@ -17,6 +17,7 @@ function PrintAll() {
   useEffect(() => {
     async function fetchData() {
       try {
+        setData(null);
         const fetchResponse = await fetch("http://localhost:5000/user/printall", { // לאיזה כתובת לפנות 
           method: "GET", // שיטה הפניה 
           headers: {

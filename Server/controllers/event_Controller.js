@@ -1,13 +1,12 @@
 const Event = require("../db/models/event");
 const User = require("../db/models/user");
-//const mongoose = require('mongoose');
+const authenticateToken = require("./auth");
 
 //request=בקשה , result=תוצאה 
 //מטרת פונקציה היא להוסיף אירוע חדש למסד הנתונים
 // 
 exports.add = async (request, result) => {
     try {
-
         // ייבוא מודול לפענוח הטוקן
         const jwt = require('jsonwebtoken');
         // חילוץ הטוקן מהכותרת של הבקשה
@@ -123,41 +122,44 @@ exports.findOneEvent = async (request, result) => {
 };
 
 //   אמורה לקבל את האי די של האירוע 
-exports.updateMeals = async (request, result) => {
+exports.updateMealsOrDecoration = [authenticateToken, async (request, result) => {
     try {
-        // ייבוא מודול לפענוח הטוקן
-        const jwt = require('jsonwebtoken');
-        // חילוץ הטוקן מהכותרת של הבקשה
-        const token = request.headers.authorization.split(' ')[1]; // Extract token from header
-        // פענוח הטוקן באמצעות המפתח הסודי
-        const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
-        // שהתקבל מהטוקן ID-חיפוש המשתמש במסד הנתונים לפי ה
-        const user = await User.findOne({ _id: decoded._id });
-        //אם המשתמש לא נמצא, חוזרת שגיאה
-        if (!user)
-            return result.status(401).send('No such User ID in the database.'); //throw new Error
-
         let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
             return result.status(401).send('No such Event ID in the database.'); //throw new Error
-        //result.send(user._id);
 
-        if (event.userID.toString() != user._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
             return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
-        const meals = await JSON.parse(request.body.meals);
-        const formData = meals.formData;
+        const data = await JSON.parse(request.body.data);
+        console.log(JSON.stringify(data)); //TEST
+        let formData = null //Meal || Decoration
+        if (data.meals != null) {
+            formData = data.meals;
+        } else if (data.decoration != null) {
+            formData = data.decoration;
+        }
 
-        let newMeals = [];
+        let newList = [];
         Object.keys(formData).forEach(options => {
-            newMeals.push(formData[options]);
+            newList.push(formData[options]);
         });
-        
-        let progress = await Event.findByIdAndUpdate(
-            event._id, // ID של האירוע לעדכון
-            { meals: newMeals },
-            { new: true } // מחזיר את המסמך המעודכן
-        );
+
+        let progress = null;
+        if (data.meals != null) {
+            progress = await Event.findByIdAndUpdate(
+                event._id, // ID של האירוע לעדכון
+                { meals: newList },
+                { new: true } // מחזיר את המסמך המעודכן
+            );
+        } else if (data.decoration != null) {
+            progress = await Event.findByIdAndUpdate(
+                event._id, // ID של האירוע לעדכון
+                { decoration: newList },
+                { new: true } // מחזיר את המסמך המעודכן
+            );
+        }
+
         /*let progress = await Event.findByIdAndUpdate(
             event._id, // ID של האירוע לעדכון
             //{ meals: event.meals }, // עדכון הארוחות
@@ -176,7 +178,6 @@ exports.updateMeals = async (request, result) => {
             amount: meals.option1.amount,
             price: meals.option1.price
         };
-    
         let option2 = { firstMeal: "bbbb", secondMeal: "asdasd11", amount: 22, price: 77 };
         let option3 = { firstMeal: "454", secondMeal: "123123", amount: 33, price: 88 };
         let option4 = { firstMeal: "dfsdf", secondMeal: "dc32g", amount: 44, price: 99 };
@@ -187,9 +188,26 @@ exports.updateMeals = async (request, result) => {
         //(שגיאת שרת פנימית) מחזירים הודעת שגיאה עם סטטוס 500
         result.status(500).send(error.message);
     }
+}];
 
-}
+//   אמורה לקבל את האי די של האירוע 
+exports.deleteEvent = [authenticateToken, async (request, result) => {
+    try {
+        let event = await Event.findById({ _id: request.query.eventID }); //חיפוש אירוע לפי מפתח
+        if (!event) //לא נמצא אירוע
+            return result.status(401).send('No such Event ID in the database.'); //throw new Error
 
+        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+            return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+
+        await Event.deleteOne(event._id);
+        result.send("Event has been deleted.");
+    } catch (error) {
+        // במקרה ומתבצעת שגיאה באחת מהשלבים 
+        //(שגיאת שרת פנימית) מחזירים הודעת שגיאה עם סטטוס 500
+        result.status(500).send("Failed to delete event: " + error.message);
+    }
+}];
 
 /*exports.updateMeals = async (request, result) => {
     try {

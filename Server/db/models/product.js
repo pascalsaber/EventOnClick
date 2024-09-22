@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const categoryList = ["First Meal", "Second Meal", "Salad", "Table"];
+const categoryList = ["First Meal", "Second Meal", "Salad", "Table", "Map", "Extra1", "Extra2"];
 
 const ProductSchema = new Schema({
     name: {

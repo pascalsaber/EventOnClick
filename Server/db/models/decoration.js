@@ -1,16 +1,20 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const MealSchema = new Schema({
-    firstMeal: {
+const DecorationSchema = new Schema({
+    table: {
         type: String,
         required: true
     },
-    secondMeal: {
+    map:{
         type: String,
         required: true
     },
-    salad: {
+    extra1: {
+        type: String,
+        required: true
+    },
+    extra2: {
         type: String,
         required: true
     },
@@ -28,4 +32,4 @@ const MealSchema = new Schema({
     }
 });
 
-module.exports = MealSchema;
+module.exports = DecorationSchema;

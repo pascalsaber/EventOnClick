@@ -8,21 +8,41 @@ const MainContent = styled.div`
 `;
 
 function FindUserByID() {
+    const token = localStorage.getItem('jwt-token');
     const [data, setData] = useState(null);
     const [inputs, setInputs] = useState({});
+    const [status, setStatus] = useState("");
+    const [message, setMessage] = useState("");
 
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value })) //input["id"] = "9snahdf8ui4hi34uh5"
     }
-        
-    const handleSubmit = (event) => {
+
+    const handleSubmit = async (event) => {
         event.preventDefault();
-        fetch(`http://localhost:5000/user/findUserByID?id=${inputs.id}`)
-            .then(response => response.json())
-            .then(data => setData([data]))
-            .catch(err => console.error(err));
+        try {
+            setData(null);
+            const fetchResponse = await fetch(`http://localhost:5000/user/findUserByID?id=${inputs.id}`, { // לאיזה כתובת לפנות 
+                method: "GET", // שיטה הפניה 
+                headers: {
+                    "Content-Type": "application/json",
+                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+                }
+            });
+            setStatus(`${fetchResponse.status}`);
+            if (!fetchResponse.ok) {
+                let responseText = await fetchResponse.text();
+                setMessage(responseText);
+                throw new Error(`[Error] Status: ${fetchResponse.status} Response: ${responseText}`);
+            }
+            const dataJSON = await fetchResponse.json();
+            setMessage("Success");
+            setData(dataJSON);
+        } catch (error) {
+            console.error(error);
+        }
     }
 
     return (
@@ -42,29 +62,13 @@ function FindUserByID() {
                     </div>
                     <input style={{ height: "25px", width: "150px", marginTop: '10px' }} type="submit" value="Login" />
                 </form>
-                <div>
-                    <p>JSON stringify</p>
-                    {JSON.stringify(data)}
-                </div>
-
-                {/*data !== null && data.map((item, index) => (
-                    item.name === inputs.name ? <div style={{ color: 'green' }}>Found user with this name!</div> : <div style={{ color: 'red' }}>Not the user!</div>
-                ))*/}
-                {data ? data.map((item, index) => (
-                    <form>
-                        <table style={{ width: '100%' }}>
-                            <tr>
-                                <td style={{ width: "100px" }} >Index: {index}</td>
-                                <td style={{ width: "100px" }} >ID: {item._id}</td>
-                                <td style={{ width: "100px" }}>Username: {item.username}</td>
-                                <td style={{ width: "100px" }}>Password: {item.password}</td>
-                                <td style={{ width: "100px" }}>First Name: {item.firstName}</td>
-                                <td style={{ width: "100px" }}>Last Name: {item.lastName}</td>
-                                <td style={{ width: "100px" }}>Email: {item.email}</td>
-                            </tr>
-                        </table>
-                    </form>
-                )) : <p>Loading...</p>
+                <p>[MESSAGE] {message}</p>
+                {process.env.REACT_APP_TESTING === 'TRUE' ?
+                    <>
+                        <h5>Testing Mode</h5>
+                        <p>[STATUS] {status}</p>
+                        <p>[JSON] {JSON.stringify(data)}</p>
+                    </> : null
                 }
             </MainContent>
         </div>
