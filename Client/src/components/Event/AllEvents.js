@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import { useNavigate } from "react-router-dom";
 import Table from 'react-bootstrap/Table';
+import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -16,6 +17,8 @@ function AllEvents() {
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); //עבור הודעה שיצרנו שמתקבלת בפניה לשרת
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     async function DeleteEvent(eventID) {
         try {
@@ -58,12 +61,6 @@ function AllEvents() {
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('jwt-token');
-        function checkLogin() {
-            if (!token)
-                navigate("/login");
-        }
-        checkLogin(); //Call the Login Check function
         fetchData();
     }, []); // Empty array means this effect runs once on mount
 

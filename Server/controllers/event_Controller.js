@@ -17,7 +17,7 @@ exports.add = async (request, result) => {
         const data = await User.findOne({ _id: decoded._id });
         //אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
-            return result.status(401).send('No such ID in the database.'); //throw new Error
+            return result.status(400).send('No such ID in the database.'); //throw new Error
         }
 
         // הוספת ה-ID של המשתמש לגוף הבקשה
@@ -71,14 +71,14 @@ exports.allEvents = async (request, result) => {
         const data = await User.findOne({ _id: decoded._id });
         //אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
-            return result.status(401).send('No such ID in the database.'); //throw new Error
+            return result.status(400).send('No such ID in the database.'); //throw new Error
         }
         // אם קיים המשתמש
         // של המשתמש ID-מחפש את כל האירועים במסד הנתונים שקשורים ל
         const allEvents = await Event.find({ userID: decoded._id });
-        // אם לא נמצאו אירועים, מחזיר הודעת שגיאה עם סטטוס 401 (לא מורשה)
+        // אם לא נמצאו אירועים, מחזיר הודעת שגיאה עם סטטוס (לא מורשה)
         if (allEvents.length == 0) {
-            return result.status(401).send('No events in the database.'); //throw new Error
+            return result.status(400).send('No events in the database.'); //throw new Error
         }
         // Handle the verified data (e.g., user ID)
         // שולח את כל האירועים שנמצאו חזרה ללקוח
@@ -100,13 +100,13 @@ exports.findOneEvent = async (request, result) => {
         // חיפוש המשתמש במסד הנתונים לפי ה-ID שהתקבל מהטוקן
         const user = await User.findById(decoded._id);
         if (!user) {
-            return result.status(401).send('No such user in the database.');
+            return result.status(400).send('No such user in the database.');
         }
 
         // חיפוש האירוע לפי ה-ID שהתקבל מהבקשה
         const event = await Event.findById(request.query.eventID);
         if (!event) {
-            return result.status(404).send('Event not found.');
+            return result.status(400).send('Event not found.');
         }
 
         // בדיקה אם האירוע שייך למשתמש
@@ -124,10 +124,10 @@ exports.findOneEvent = async (request, result) => {
 exports.updateEventByID = [authenticateToken, async (request, result) => {
     let event = await Event.findById({ _id: request.query.eventid }); //חיפוש אירוע לפי מפתח
     if (!event) //לא נמצא אירוע
-        return result.status(401).send('No such Event ID in the database.'); //throw new Error
+        return result.status(400).send('No such Event ID in the database.'); //throw new Error
 
     if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-        return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+        return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
     const data = request.body;
     let progress = await Event.findByIdAndUpdate(
@@ -141,10 +141,10 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
     try {
         let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
-            return result.status(401).send('No such Event ID in the database.'); //throw new Error
+            return result.status(400).send('No such Event ID in the database.'); //throw new Error
 
         if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-            return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
         const data = await JSON.parse(request.body.data);
         console.log(JSON.stringify(data)); //TEST
@@ -245,10 +245,10 @@ exports.deleteEvent = [authenticateToken, async (request, result) => {
     try {
         let event = await Event.findById({ _id: request.query.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
-            return result.status(401).send('No such Event ID in the database.'); //throw new Error
+            return result.status(400).send('No such Event ID in the database.'); //throw new Error
 
         if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-            return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
         await Event.deleteOne(event._id);
         result.send("Event has been deleted.");
@@ -271,7 +271,7 @@ exports.deleteEvent = [authenticateToken, async (request, result) => {
         const data = await User.findOne({ _id: decoded._id });
         // אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
-            return result.status(401).send('No such ID in the database.');
+            return result.status(400).send('No such ID in the database.');
         }
 
         // הוספת ה-ID של המשתמש לגוף הבקשה
@@ -325,7 +325,7 @@ exports.deleteEvent = [authenticateToken, async (request, result) => {
         const data = await User.findOne({ _id: decoded._id });
         // אם המשתמש לא נמצא, חוזרת שגיאה
         if (!data) {
-            return result.status(401).send('No such ID in the database.');
+            return result.status(400).send('No such ID in the database.');
         }
 
         // הוספת ה-ID של המשתמש לגוף הבקשה

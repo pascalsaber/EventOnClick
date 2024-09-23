@@ -21,13 +21,13 @@ exports.register = async (request, result) => {
         //אם שם המשתמש תפוס
         if (username_taken)
             // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
-            return result.status(404).send('Username is taken.');
+            return result.status(400).send('Username is taken.');
 
         const email_taken = await User.findOne({ email: newUser.email });
         //אם שם המשתמש תפוס
         if (email_taken)
             // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
-            return result.status(404).send('Email is taken.');
+            return result.status(400).send('Email is taken.');
 
         // אם המשתמש לא נמצא אז אפשר ליצור אותו במערכת 
         // מתחילים לעשות בדיקות לסיסמה שהמשתמש נתן 
@@ -35,7 +35,7 @@ exports.register = async (request, result) => {
         let isStrongPassword = await newUser.isStrongPassword(); //MUST USE AWAIT!!!!!!!!!!!!!!!!!!!!!!!!!!!
         //אם הסיסמה לא חזקה, מחזירה הודעת שגיאה עם סטטוס 404
         if (isStrongPassword == false)
-            return result.status(404).send('Password is not strong.');
+            return result.status(400).send('Password is not strong.');
         newUser.password = encryptPassword(newUser.password); //הצפנת סיסמא
         const progress = await newUser.save();
         result.send(progress);
@@ -53,13 +53,13 @@ exports.login = async (request, result) => {
         //data חיפוש אם שם המשתמש קיים במערכת ושמירת הנתונים במשתנה
         const data = await User.findOne({ username: req_username });
         if (!data) {
-            return result.status(401).send('Wrong username.'); //throw new Error
+            return result.status(400).send('Wrong username.'); //throw new Error
         }
         // compareSync()-משמשת להשוואת סיסמה רגילה עם סיסמה מוצפנת כדי לבדוק אם הן תואמות
         // אחרי ההשוואה בין הסיסמה שהמשתמש נתן לבין הסיסמה שנמצאת בסיס נתונים   
         const isValid = bcrypt.compareSync(req_password, data.password);
         if (!isValid) {
-            return result.status(401).send('Wrong password.'); //throw new Error
+            return result.status(400).send('Wrong password.'); //throw new Error
         }
         //יוצרת טוקן אימות עבור המשתמש שמכל את האידי של המשתמש ומוצפן באמצעות מפתח סודי
         let token = await data.generateToken();
@@ -92,7 +92,7 @@ exports.updateUserByID = [authenticateToken, // Middleware
             let isStrongPassword = await userData.isStrongPassword(); //MUST USE AWAIT!!!!!!!!!!!!!!!!!!!!!!!!!!!
             //אם הסיסמה לא חזקה, מחזירה הודעת שגיאה עם סטטוס 404
             if (isStrongPassword == false)
-                return result.status(404).send('Password is not strong.');
+                return result.status(400).send('Password is not strong.');
             userData.password = encryptPassword(userData.password); //הצפנת סיסמא
 
             if (userData.email != request.body.email) { //כדי להימנע מבדיקה של מייל זה מכיוון והוא בשימוש
@@ -100,7 +100,7 @@ exports.updateUserByID = [authenticateToken, // Middleware
                 //אם שם המשתמש תפוס
                 if (email_taken)
                     // מוחזרת שגיאה שהמשתמש כבר קיים במערכת 
-                    return result.status(404).send('Email is taken.');
+                    return result.status(400).send('Email is taken.');
             }
 
             let progress = await User.findByIdAndUpdate(
@@ -129,12 +129,12 @@ exports.findUserByID = [authenticateToken, // Middleware
                 console.log("User Data: " + JSON.stringify(request.userData)) //From authenticateToken
             }
             if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
-                return result.status(404).send('Must be admin.');
+                return result.status(400).send('Must be admin.');
             // חיפוש המשתמש לפי מספר האידי שלו
             const data = await User.findById(request.query.id);
             //אם המשתמש לא נמצא מוחזרת שגיאה 
             if (!data)
-                return result.status(404).send('No data');
+                return result.status(400).send('No data');
             result.send(data); // הפונקציה מחזירה את האובייקט של המשתמש
         } catch (error) {
             result.status(500).send(error.message);
@@ -147,7 +147,7 @@ exports.printall = [authenticateToken, // Middleware
         try {
             const userData = request.userData;
             if (userData.status == 0)
-                return result.status(404).send('Must be admin.');
+                return result.status(400).send('Must be admin.');
 
             const allUsers = await User.find();
             result.json(allUsers);

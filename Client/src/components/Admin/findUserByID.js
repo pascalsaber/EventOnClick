@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -9,10 +11,14 @@ const MainContent = styled.div`
 
 function FindUserByID() {
     const token = localStorage.getItem('jwt-token');
+    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+
     const [data, setData] = useState(null);
     const [inputs, setInputs] = useState({});
     const [status, setStatus] = useState("");
     const [message, setMessage] = useState("");
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const handleChange = (event) => {
         const name = event.target.name;
