@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const MealSchema = require('./meal')
 const DecorationSchema = require('./decoration')
+const PaymentSchema = require('./payment')
 const enumLocation = ["Inside the Hall", "Outside the Hall"];
 const enumType = ["Party", "Wedding", "Bar/Bat Mitzvah"];
 
@@ -37,12 +38,15 @@ const EventSchema = new Schema({
         type: MealSchema,
         required: true
     }]*/
-    meals: [MealSchema],
+    meals:[MealSchema],
     decorations:[DecorationSchema],
     status:{
         type: String,
         required: true
-    }
+    },
+    payments:[PaymentSchema]
+
+
 });
 
 /*

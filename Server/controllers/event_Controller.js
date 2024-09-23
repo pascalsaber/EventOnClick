@@ -204,6 +204,41 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
         result.status(500).send(error.message);
     }
 }];
+exports.updatePayment = [authenticateToken, async (request, result) => {
+    try {
+        let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
+        if (!event) //לא נמצא אירוע
+            return result.status(401).send('No such Event ID in the database.'); //throw new Error
+
+        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+            return result.status(401).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+
+        const data = await JSON.parse(request.body.data);
+        console.log(JSON.stringify(data)); //TEST
+        let formData = null //Meal || Decoration
+        if (data.payments != null) {
+            formData = data.payments;
+        }
+
+        let newList = [];
+        Object.keys(formData).forEach(options => {
+            newList.push(formData[options]);
+        });
+        let progress = null;
+        if (data.payments != null) {
+            progress = await Event.findByIdAndUpdate(
+                event._id, // ID של האירוע לעדכון
+                { payments: newList },
+                { new: true } // מחזיר את המסמך המעודכן
+            );
+        }
+        result.send(progress);
+    } catch (error) {
+        // במקרה ומתבצעת שגיאה באחת מהשלבים 
+        //(שגיאת שרת פנימית) מחזירים הודעת שגיאה עם סטטוס 500
+        result.status(500).send(error.message);
+    }
+}]
 
 //   אמורה לקבל את האי די של האירוע 
 exports.deleteEvent = [authenticateToken, async (request, result) => {
