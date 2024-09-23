@@ -9,7 +9,7 @@ const authenticateToken = async (request, result, next) => {
          // חיפוש המשתמש במסד הנתונים לפי ה-אידי ושמירה 
         const userData = await User.findOne({ _id: decoded._id }); // Find user by ID
         if (!userData) {
-            return result.status(401).send('No such ID in the database.'); // Send 401 if no user found
+            return result.status(400).send('No such ID in the database.'); // Send 401 if no user found
         }
         request.userData = userData; // Attach user data to request object
         next(); // Proceed to the next middleware or route handler

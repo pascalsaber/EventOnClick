@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
+
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -36,6 +38,9 @@ function SelectAMeal() {
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
+    fetch_findProductByCategory();
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
     async function fetch_findProductByCategory(category) {
@@ -103,16 +108,6 @@ function SelectAMeal() {
         }
     }
 
-    // useEffect- קומפוננטה המופעלת לאחר פעולה שמתבצעת 
-    // במקרה הזה זה קורה פעם אחת כשמעלים את העמוד 
-    // שלב 1:
-    useEffect(() => {
-        if (!token)   //מוודא שהתוקן של המשתמש עדיין בתוקף אחרת מחזירה את המשתמש לעמוד ההתחברות מחדש
-            navigate("/login");
-        fetch_findProductByCategory();
-    }, []); // מערך ריק פירושו שהאפקט הזה פועל פעם אחת בהעלעת העמוד
-
-    // שלב 2:
     useEffect(() => {
         console.log("Products: " + JSON.stringify(products));
         console.log("Event ID: " + query_eventid);

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -28,7 +29,6 @@ function SelectADecoration() {
         };
     }
     const [formData, setFormData] = useState(initialFormData); // עבור התיבות בחירה
-
     // מכיל את כל המידע של המוצרים
     const [products, setProducts] = useState([])
 
@@ -37,6 +37,8 @@ function SelectADecoration() {
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
     async function fetch_findProductByCategory() {

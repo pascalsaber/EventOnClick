@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -13,8 +15,8 @@ function AddEvent() {
     // URLSearchParams - הצבת הערך שמתקבל בבנאי זה על מנת לשלוף ולעדכין מאת המידע בצורה מסודרת 
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
-    const query_eventid = queryParameters.get("eventid")
-
+    //let query_eventid = queryParameters.get("eventid")
+    const [query_eventid, setquery_eventid] = useState(queryParameters.get("eventid"))
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
@@ -25,6 +27,8 @@ function AddEvent() {
 
     const [enumLocationList, setEnumLocationList] = useState([{ value: "", label: "Error Loading from Database..." }])
     const [enumTypeList, setEnumTypeList] = useState([{ value: "", label: "Error Loading from Database..." }])
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     useEffect(() => {
         async function fetchEventByID() {
@@ -59,10 +63,6 @@ function AddEvent() {
     }, [enumTypeList]);
 
     useEffect(() => {
-        function checkLogin() {
-            if (!token)
-                navigate("/login");
-        }
         async function fetch_enum(type) {
             const fetchResponse = await fetch(`http://localhost:5000/event/returnEnumListByType?type=${type}`);
             if (fetchResponse.ok) {
@@ -80,7 +80,6 @@ function AddEvent() {
                     setEnumTypeList(list);
             }
         }
-        checkLogin();
         fetch_enum("location");
         fetch_enum("type");
     }, []); // Empty array means this effect runs once on mount
@@ -110,7 +109,7 @@ function AddEvent() {
                     location: inputs.location,
                     type: inputs.type,
                     notes: inputs.notes,
-                    status: inputs.status
+                    status: "Open" //Closed
                 })
             });
 
@@ -126,6 +125,7 @@ function AddEvent() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
+            setquery_eventid(dataJSON._id)
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
@@ -174,21 +174,19 @@ function AddEvent() {
                         value={inputs.notes || ""}
                         onChange={handleChange}
                     />
-                    <label>Status</label>
-                    <input
-                        type="text"
-                        name="status"
-                        value={inputs.status || ""}
-                        onChange={handleChange}
-                        /*required*/ />
-                    <input type="submit" value="Login" />
-                    <button style={{ width: "100px" }} onClick={() => navigate(`/selectAMeal?eventid=${query_eventid}`)}>Next Page</button>
-           
-                    <div>
-                        <p>[STATUS] {status}</p>
-                        <p>[MESSAGE] {message}</p>
-                        <p>[JSON] {JSON.stringify(data)}</p>
-                    </div>
+                    <input type="submit" value="Update" />
+                    {query_eventid ?
+                        <Button variant="primary" size="lg" onClick={() => navigate(`/selectAMeal?eventid=${query_eventid}`)} >Next Page</Button>
+                        : <></>
+                    }
+                    <p>[MESSAGE] {message}</p>
+                    {process.env.REACT_APP_TESTING === 'TRUE' ?
+                        <>
+                            <h5>Testing Mode</h5>
+                            <p>[STATUS] {status}</p>
+                            <p>[JSON] {JSON.stringify(data)}</p>
+                        </> : null
+                    }
                 </form>
             </MainContent>
         </div>

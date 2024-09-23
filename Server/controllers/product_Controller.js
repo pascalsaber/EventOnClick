@@ -9,7 +9,7 @@ exports.add = async (request, result) => {
         const data = await Product.findOne({ name: newProduct.name });
         //אם המוצר נמצא, חוזרת שגיאה
         if (data) {
-            return result.status(401).send('מוצר זה כבר קיים'); //throw new Error
+            return result.status(400).send('מוצר זה כבר קיים'); //throw new Error
         }
         const progress = await newProduct.save();
         // שליחת התגובה עם המידע על המוצר שנשמר
@@ -24,7 +24,7 @@ exports.add = async (request, result) => {
 exports.updateProductByID =[authenticateToken, async (request, result) => {
     try {
         if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
-                return result.status(404).send('Must be admin.');
+                return result.status(400).send('Must be admin.');
         const req_id = request.body.id;
         let data = await Product.findById(req_id);
         if (!data) {
@@ -58,12 +58,12 @@ exports.updateProductByID =[authenticateToken, async (request, result) => {
 exports.deleteProductByID = async (request, result) => {
     try {
         if (request.userData.status != 1) // בדיקה שהמשתמש מנהל
-                return result.status(404).send('Must be admin.');
+                return result.status(400).send('Must be admin.');
         const req_id = request.body.id;
         const data = await Product.findByIdAndDelete(req_id);
         if (!data) {
             // סטטוס 404 מציין שהשרת לא מצא את הכתובת המבוקשת 
-            return result.status(404).send('No data');
+            return result.status(400).send('No data');
         }
         result.send(data);
     } catch (error) {
@@ -81,7 +81,7 @@ exports.findProductByCategory = async (request, result) => {
         else
             data = await Product.find({ category: request.body.category });
         if (data.length === 0) {
-            return result.status(401).send('אין בקטגוריה זו אף מוצר'); //throw new Error
+            return result.status(400).send('אין בקטגוריה זו אף מוצר'); //throw new Error
         }
         result.json(data);
     } catch (error) {

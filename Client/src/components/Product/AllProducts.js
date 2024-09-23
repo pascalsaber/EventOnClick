@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import { checkLogin } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -9,12 +10,15 @@ const MainContent = styled.div`
 `;
 
 function AllProducts() {
-    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר
-
+    const token = localStorage.getItem('jwt-token');
+    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+  
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); //עבור הודעה שיצרנו שמתקבלת בפניה לשרת
+
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
@@ -52,16 +56,6 @@ function AllProducts() {
         const value = event.target.value;
         setInputs(values => ({ ...values, [name]: value })) //input["id"] = "9snahdf8ui4hi34uh5"
     }
-
-    useEffect(() => {
-        const token = localStorage.getItem('jwt-token');
-        function checkLogin() {
-            if (!token)
-                navigate("/login");
-        }
-        checkLogin(); //Call the Login Check function
-    }, []); // Empty array means this effect runs once on mount
-
 
     return (
         <div>
