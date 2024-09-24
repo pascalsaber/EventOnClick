@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -58,47 +59,21 @@ function SelectADecoration() {
     async function fetchData(eventID) {
         try {
             //eventID לשרת עם get שולח בקשת 
-            const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            // מעדכן את הסטטוס של הבקשה
-            setStatus(`${fetchResponse.status}`);
-            // בודק אם הבקשה לא הצליחה
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            //JSON -ממיר את התגובה ל
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success"); //TEMP
-            setData(dataJSON);
+            const fetchData = await fetch_URL_GET(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, token);
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
             // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
-            dataJSON.decorations.forEach((decoration, index) => {
+            fetchData.data.decorations.forEach((decoration, index) => {
                 if (decoration != null) {
-                    // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
-                    // על מנת להעזר בה בלדעת את מחיר המוצר
-                    if (decoration.table == "" || decoration.map == "" || decoration.extra1 == "" || decoration.extra2 == "")
-                        return
-                    const filter_table = products.filter(item => item.name === decoration.table);
-                    const filter_map = products.filter(item => item.name === decoration.map);
-                    const filter_extra1 = products.filter(item => item.name === decoration.extra1);
-                    const filter_extra2 = products.filter(item => item.name === decoration.extra2);
-                    console.log("filtered..." + JSON.stringify(filter_table))
-                    console.log("filtered..." + filter_table[0].price)
-                    // מעדכן את המצב של הארוחות והמחיר
+                    // מציב את המידע של הארוחה בשדות המתאים 
                     const option = `option${index + 1}`;
                     handleChange({ target: { name: `${option}.table`, value: decoration.table } });
                     handleChange({ target: { name: `${option}.map`, value: decoration.map } });
                     handleChange({ target: { name: `${option}.extra1`, value: decoration.extra1 } });
                     handleChange({ target: { name: `${option}.extra2`, value: decoration.extra2 } });
                     handleChange({ target: { name: `${option}.amount`, value: decoration.amount } });
-                    let totalPrice = (filter_table[0].price + filter_map[0].price + filter_extra1[0].price + filter_extra2[0].price) * decoration.amount;
-                    handleChange({ target: { name: `${option}.price`, value: totalPrice } });
+                    handleChange({ target: { name: `${option}.price`, value: decoration.price } });
                 }
             });
         } catch (error) {
@@ -111,8 +86,6 @@ function SelectADecoration() {
     // במקרה הזה זה קורה פעם אחת כשמעלים את העמוד 
     // שלב 1:
     useEffect(() => {
-        if (!token)   //מוודא שהתוקן של המשתמש עדיין בתוקף אחרת מחזירה את המשתמש לעמוד ההתחברות מחדש
-            navigate("/login");
         fetch_findProductByCategory();
     }, []); // מערך ריק פירושו שהאפקט הזה פועל פעם אחת בהעלעת העמוד
 
@@ -140,6 +113,18 @@ function SelectADecoration() {
         // על מנת לא לאבד את הנתונים שהצבנו באינפותים ועל מנת לעדכין את השינויים בשרת 
         event.preventDefault();
         try {
+            for (let i = 1; i <= 2; i++) {
+                let decoration = formData[`option${i}`]
+                if (decoration != null) {
+                    if (decoration.table == "" || decoration.map == "" || decoration.extra1 == "" || decoration.extra2 == "")
+                        return
+                    const filter_table = products.filter(item => item.name === decoration.table);
+                    const filter_map = products.filter(item => item.name === decoration.map);
+                    const filter_extra1 = products.filter(item => item.name === decoration.extra1);
+                    const filter_extra2 = products.filter(item => item.name === decoration.extra2);
+                    decoration.price = (filter_table[0].price + filter_map[0].price + filter_extra1[0].price + filter_extra2[0].price) * decoration.amount;
+                }
+            }
             const fetchResponse = await fetch("http://localhost:5000/event/updateMealsOrDecoration", { // לאיזה כתובת לפנות 
                 method: "POST", // שיטה הפניה
                 headers: {
@@ -163,9 +148,8 @@ function SelectADecoration() {
             }
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
-            setData([dataJSON]);
             fetchData(query_eventid);
-            navigate(`/payment?eventid=${dataJSON._id}`);
+            //navigate(`/payment?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -282,8 +266,11 @@ function SelectADecoration() {
                         Total Price:
                         <input disabled type="number" name="option2.price" value={formData.option2.price} />
                     </label>
-                 
                     <input type="submit" value="Update" />
+                    {query_eventid ?
+                        <Button variant="primary" size="lg" onClick={() => navigate(`/payment?eventid=${query_eventid}`)} >Next Page</Button>
+                        : <></>
+                    }
                     <p>[MESSAGE] {message}</p>
                     {process.env.REACT_APP_TESTING === 'TRUE' ?
                         <>
