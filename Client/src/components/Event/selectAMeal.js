@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
+import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -25,7 +26,7 @@ function SelectAMeal() {
             secondMeal: '',
             salad: '',
             amount: '',
-            price: ''
+            price: '0'
         };
     }
     const [formData, setFormData] = useState(initialFormData); // עבור התיבות בחירה
@@ -58,46 +59,20 @@ function SelectAMeal() {
     // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
     async function fetchData(eventID) {
         try {
-            //eventID לשרת עם get שולח בקשת 
-            const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            // מעדכן את הסטטוס של הבקשה
-            setStatus(`${fetchResponse.status}`);
-            // בודק אם הבקשה לא הצליחה
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            //JSON -ממיר את התגובה ל
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success"); //TEMP
-            setData(dataJSON);
+            const fetchData = await fetch_URL_GET(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, token);
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
             // עובר על כל הארוחות באירוע ומעדכן את המצב בהתאם
-            dataJSON.meals.forEach((meal, index) => {
+            fetchData.data.meals.forEach((meal, index) => {
                 if (meal != null) {
-                    // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
-                    // על מנת להעזר בה בלדעת את מחיר המוצר
-                    if (meal.firstMeal == "" || meal.secondMeal == "" || meal.salad == "")
-                        return
-                    const filter_firstMeal = products.filter(item => item.name === meal.firstMeal);
-                    const filter_secondMeal = products.filter(item => item.name === meal.secondMeal);
-                    const filter_salad = products.filter(item => item.name === meal.salad);
-                    console.log("filtered..." + JSON.stringify(filter_firstMeal))
-                    console.log("filtered..." + filter_firstMeal[0].price)
-                    // מעדכן את המצב של הארוחות והמחיר
+                    // מציב את המידע של הארוחה בשדות המתאים 
                     const option = `option${index + 1}`;
                     handleChange({ target: { name: `${option}.firstMeal`, value: meal.firstMeal } });
                     handleChange({ target: { name: `${option}.secondMeal`, value: meal.secondMeal } });
                     handleChange({ target: { name: `${option}.salad`, value: meal.salad } });
                     handleChange({ target: { name: `${option}.amount`, value: meal.amount } });
-                    let totalPrice = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
-                    handleChange({ target: { name: `${option}.price`, value: totalPrice } });
+                    handleChange({ target: { name: `${option}.price`, value: meal.price } });
                 }
             });
         } catch (error) {
@@ -133,6 +108,20 @@ function SelectAMeal() {
         // על מנת לא לאבד את הנתונים שהצבנו באינפותים ועל מנת לעדכין את השינויים בשרת 
         event.preventDefault();
         try {
+            for (let i = 1; i <= 4; i++) {
+                let meal = formData[`option${i}`]
+                if (meal != null) {
+                    // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
+                    // על מנת להעזר בה בלדעת את מחיר המוצר
+                    console.log("firstMeal: " + meal.firstMeal)
+                    if (meal.firstMeal == "" || meal.secondMeal == "" || meal.salad == "")
+                        return
+                    const filter_firstMeal = products.filter(item => item.name === meal.firstMeal);
+                    const filter_secondMeal = products.filter(item => item.name === meal.secondMeal);
+                    const filter_salad = products.filter(item => item.name === meal.salad);
+                    meal.price = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
+                }
+            }
             const fetchResponse = await fetch("http://localhost:5000/event/updateMealsOrDecoration", { // לאיזה כתובת לפנות 
                 method: "POST", // שיטה הפניה
                 headers: {
@@ -156,9 +145,8 @@ function SelectAMeal() {
             }
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
-            setData([dataJSON]);
             fetchData(query_eventid);
-            navigate(`/selectADecoration?eventid=${dataJSON._id}`);
+            // navigate(`/selectADecoration?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }
@@ -336,6 +324,10 @@ function SelectAMeal() {
                         <input disabled type="number" name="option4.price" value={formData.option4.price} />
                     </label>
                     <input type="submit" value="Update" />
+                    {query_eventid ?
+                        <Button variant="primary" size="lg" onClick={() => navigate(`/selectADecoration?eventid=${query_eventid}`)} >Next Page</Button>
+                        : <></>
+                    }
                     <p>[MESSAGE] {message}</p>
                     {process.env.REACT_APP_TESTING === 'TRUE' ?
                         <>
