@@ -3,7 +3,7 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -11,40 +11,26 @@ const MainContent = styled.div`
 `;
 function PrintAll() {
   const token = localStorage.getItem('jwt-token');
-  const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+  const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+  checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
   const [data, setData] = useState(null);
   const [inputs, setInputs] = useState({});
   const [status, setStatus] = useState("");
   const [message, setMessage] = useState("");
 
-  checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
-
   useEffect(() => {
-    async function fetchData() {
+    async function main() {
       try {
-        setData(null);
-        const fetchResponse = await fetch("http://localhost:5000/user/printall", { // לאיזה כתובת לפנות 
-          method: "GET", // שיטה הפניה 
-          headers: {
-            "Content-Type": "application/json",
-            'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-          }
-        });
-        setStatus(`${fetchResponse.status}`);
-        if (!fetchResponse.ok) {
-          let responseText = await fetchResponse.text();
-          setMessage(responseText);
-          throw new Error(`[Error] Status: ${fetchResponse.status} Response: ${responseText}`);
-        }
-        const dataJSON = await fetchResponse.json();
-        setMessage("Success");
-        setData(dataJSON);
+        const fetchData = await fetch_URL_GET("http://localhost:5000/user/printall", token);
+        setStatus(fetchData.status);
+        setMessage(fetchData.message);
+        setData(fetchData.data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchData();
+    main();
   }, []); // Empty array means this effect runs once on mount
 
   return (

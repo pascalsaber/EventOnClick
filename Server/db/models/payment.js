@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const PaymentSchema = new Schema({
-    cardholderName: {//שם_בעל_הכרטיס
+    cardHolderName: {//שם_בעל_הכרטיס
         type: String,
         required: true
     },
@@ -12,7 +12,7 @@ const PaymentSchema = new Schema({
         required: true,
         maxlength: 16 // הגבלת מספר התווים ל-16
     },
-    cardHolderId: {//תעודת_זהות_בעל_הכרטיס
+    cardHolderID: {//תעודת_זהות_בעל_הכרטיס
         type: Number,
         trim: true,//משמשת להסרת רווחים מיותרים בתחילת ובסוף המחרוזת לפני שמירתה
         required: true,

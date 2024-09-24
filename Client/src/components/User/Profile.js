@@ -11,14 +11,13 @@ const MainContent = styled.div`
 
 function Profile() {
     const token = localStorage.getItem('jwt-token');
-    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const [data, setData] = useState(null);
     const [inputs, setInputs] = useState({});
     const [status, setStatus] = useState("");
     const [message, setMessage] = useState("");
-
-    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד

@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import { checkLogin } from '../utils';
 
-
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
     margin-left: 1%; // Adjust this value as needed
@@ -13,6 +12,7 @@ const MainContent = styled.div`
 function SelectAMeal() {
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const [data, setData] = useState(null); // מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); // עבור מצב הבקשה כמספר כגון 200 - תקין
@@ -39,8 +39,6 @@ function SelectAMeal() {
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
 
-    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
-    fetch_findProductByCategory();
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
     async function fetch_findProductByCategory(category) {
@@ -109,6 +107,10 @@ function SelectAMeal() {
     }
 
     useEffect(() => {
+        fetch_findProductByCategory();
+    }, []);
+
+    useEffect(() => {
         console.log("Products: " + JSON.stringify(products));
         console.log("Event ID: " + query_eventid);
         fetchData(query_eventid)
@@ -155,7 +157,7 @@ function SelectAMeal() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
-            fetchData(query_eventid)
+            fetchData(query_eventid);
             navigate(`/selectADecoration?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);

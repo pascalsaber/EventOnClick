@@ -11,14 +11,13 @@ const MainContent = styled.div`
 
 function AllProducts() {
     const token = localStorage.getItem('jwt-token');
-    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
-  
+    const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
+
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); //עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); //עבור הודעה שיצרנו שמתקבלת בפניה לשרת
-
-    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד

@@ -95,42 +95,9 @@ function Login() {
                         <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
                     </div>
                 </form>
-
-                {/*data !== null && data.map((item, index) => (
-                    item.name === inputs.name ? <div style={{ color: 'green' }}>Found user with this name!</div> : <div style={{ color: 'red' }}>Not the user!</div>
-                ))*/}
-                {/*data ? data.map((item, index) => (
-                    <form>
-                        <table style={{ width: '100%' }}>
-                            <tr>
-                                <td style={{ width: "100px" }} >Index: {index}</td>
-                                <td style={{ width: "100px" }} >ID: {item._id}</td>
-                                <td style={{ width: "100px" }}>Username: {item.username}</td>
-                                <td style={{ width: "100px" }}>Password: {item.password}</td>
-                                <td style={{ width: "100px" }}>First Name: {item.firstName}</td>
-                                <td style={{ width: "100px" }}>Last Name: {item.lastName}</td>
-                                <td style={{ width: "100px" }}>Email: {item.email}</td>
-                            </tr>
-                        </table>
-                    </form>
-                )) : <p>Loading...</p>
-                */}
             </MainContent>
         </div >
     );
 }
-
-// Example 
-/* const Select = ({ label, value, options, onChange }) => {
-    return (
-        <label>
-            <select style={{ marginLeft: '10px' }} value={value} onChange={onChange}>
-                {options.map((option) => (
-                    <option value={option.value}>{option.label}</option>
-                ))}
-            </select>
-        </label>
-    );
-};*/
 
 export default Login;

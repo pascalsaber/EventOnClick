@@ -20,6 +20,7 @@ import AddEvent from './components/Event/addEvent'
 import SelectAMeal from './components/Event/selectAMeal.js'
 import SelectADecoration from './components/Event/selectADecoration.js'
 import AllEvents from "./components/Event/AllEvents";
+import Payment from "./components/Event/payment.js";
 
 // Product Components
 import AllProducts from "./components/Product/AllProducts.js";
@@ -39,6 +40,7 @@ const router = createBrowserRouter(
       <Route path="/addEvent" element={<AddEvent />} />
       <Route path="/selectAMeal" element={<SelectAMeal />} />
       <Route path="/selectADecoration" element={<SelectADecoration />} />
+      <Route path="/payment" element={<Payment />} />
       {/*Product*/}
       <Route path="/allproducts" element={<AllProducts />} />
       {/*Admin*/}

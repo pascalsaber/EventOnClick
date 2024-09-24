@@ -11,14 +11,16 @@ const MainContent = styled.div`
 `;
 
 function AddEvent() {
+    const token = localStorage.getItem('jwt-token');
+    const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
+
     //window.location.search - (?eventID=abc&name=bbb לדוגמה )מכילה את החלק שאני שולחת בניתוב במקרה שלי אני יקבל 
     // URLSearchParams - הצבת הערך שמתקבל בבנאי זה על מנת לשלוף ולעדכין מאת המידע בצורה מסודרת 
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     //let query_eventid = queryParameters.get("eventid")
     const [query_eventid, setquery_eventid] = useState(queryParameters.get("eventid"))
-    const token = localStorage.getItem('jwt-token');
-    const navigate = useNavigate(); // פונקציה של רייאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
 
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
     const [data, setData] = useState(null); //מידע שהתקבל מבסיס הנתונים
@@ -27,8 +29,6 @@ function AddEvent() {
 
     const [enumLocationList, setEnumLocationList] = useState([{ value: "", label: "Error Loading from Database..." }])
     const [enumTypeList, setEnumTypeList] = useState([{ value: "", label: "Error Loading from Database..." }])
-
-    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     useEffect(() => {
         async function fetchEventByID() {

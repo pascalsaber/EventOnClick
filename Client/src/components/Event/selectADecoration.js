@@ -12,6 +12,7 @@ const MainContent = styled.div`
 function SelectADecoration() {
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
+    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const [data, setData] = useState(null); // מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); // עבור מצב הבקשה כמספר כגון 200 - תקין
@@ -37,8 +38,6 @@ function SelectADecoration() {
     const queryParameters = new URLSearchParams(window.location.search)
     // שליפת הערך של איבנת אי די ושמירתו במשתנה 
     const query_eventid = queryParameters.get("eventid")
-
-    checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
     async function fetch_findProductByCategory() {
@@ -165,7 +164,8 @@ function SelectADecoration() {
             const dataJSON = await fetchResponse.json();
             setMessage("Success");
             setData([dataJSON]);
-            fetchData(query_eventid)
+            fetchData(query_eventid);
+            navigate(`/payment?eventid=${dataJSON._id}`);
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }

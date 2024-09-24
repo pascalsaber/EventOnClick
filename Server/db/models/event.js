@@ -38,35 +38,16 @@ const EventSchema = new Schema({
         type: MealSchema,
         required: true
     }]*/
-    meals:[MealSchema],
-    decorations:[DecorationSchema],
-    status:{
+    meals: [MealSchema],
+    decorations: [DecorationSchema],
+    status: {
         type: String,
         required: true
     },
-    payments:[PaymentSchema]
+    payments: PaymentSchema
 
 
 });
-
-/*
-userSchema.methods.assignUserToEvent = async function (thisUser, thisEvent) {
-    try {
-        const user = await user.findById(thisUser._id);
-        const event = await event.findById(thisEvent._id);
-
-        if (!user || !event) {
-            console.log('user or event not found.');
-            return;
-        }
-        // הוסף את הסטודנט למערך של הקורס
-        event.users.push(user);
-        await event.save();
-        console.log(`User ${thisUser.firstName} ${thisUser.lastName} assigned to course ${thisEvent.name}.`);
-    } catch (error) {
-        console.error('Error assigning user to event:', error.message);
-    }
-}*/
 
 EventSchema.methods.enumRequest = async function (enumRequest) {
     if (enumRequest == "location")
@@ -87,15 +68,7 @@ EventSchema.methods.addToList = async function (reqBody) {
 };
 
 // בדיקת תאריך פנוי לאירוע
-EventSchema.statics.validDate = async function (yourDate) {
-    const findEvent = await EventData.findOne({ date: yourDate });
-    if (findEvent) {
-        console.log('התאריך כבר קיים במסד הנתונים');
-    } else {
-        console.log('התאריך פנוי');
-    }
-};
-EventSchema.methods.getMealsByField = function(field) {
+EventSchema.methods.getMealsByField = function (field) {
     if (!this.meals) {
         return []; // מחזיר מערך ריק אם meals לא מוגדר
     }
@@ -103,10 +76,6 @@ EventSchema.methods.getMealsByField = function(field) {
         .filter(meal => meal !== null && meal !== undefined) // סינון אובייקטים null או undefined
         .map(meal => meal[field]);
 };
-
-
-
-
 
 const EventData = mongoose.model('Event', EventSchema);
 
