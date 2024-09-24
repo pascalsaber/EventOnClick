@@ -3,7 +3,7 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
-import { checkLogin, fetch_URL_GET } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -41,18 +41,16 @@ function SelectADecoration() {
     const query_eventid = queryParameters.get("eventid")
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
-    async function fetch_findProductByCategory() {
-        //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
-        const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
-            method: "POST", // שיטה הפניה
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-            }
-        });
-        if (fetchResponse.ok) { // בודק אם הבקשה הצליחה
-            let responseJSON = await fetchResponse.json(); //JSON- ממיר את התגובה ל
-            setProducts(responseJSON);
+    async function fetch_findProductByCategory(category) {
+        try {
+            // פניה לשרת
+            const fetchData = await fetch_URL_GET(`http://localhost:5000/product/findProductByCategory`, token);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setProducts(fetchData.data)
+        } catch (error) {
+            console.error(`[Error] ${error}`);
         }
     }
     // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
@@ -125,31 +123,20 @@ function SelectADecoration() {
                     decoration.price = (filter_table[0].price + filter_map[0].price + filter_extra1[0].price + filter_extra2[0].price) * decoration.amount;
                 }
             }
-            const fetchResponse = await fetch("http://localhost:5000/event/updateMealsOrDecoration", { // לאיזה כתובת לפנות 
-                method: "POST", // שיטה הפניה
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify(
-                    { // המרת המידעה שנשלח כבדי מהטופס לאקספרס
-                        // האינפוט הוא המידעה שנרשם בטופס
-                        eventID: query_eventid,
-                        data: JSON.stringify({ decorations: formData }),
-                    })
-            });
-            setData(null);
-            setStatus(`${fetchResponse.status}`);
-            //ok אם הסטטוס שונה מ200 שהוא
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success");
-            fetchData(query_eventid);
-            //navigate(`/payment?eventid=${dataJSON._id}`);
+            
+            // מידע להעברה
+            let tempData = {
+                eventID: query_eventid,
+                data: JSON.stringify({ decorations: formData }),
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/event/updateMealsOrDecoration", token, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
+
+            //fetchData(query_eventid); //טעינה מחדש לנתונים מהשרת
         } catch (error) {
             console.error(`[HandleSubmit Error] ${error}`);
         }

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form'; //https://react-bootstrap.netlify.app/docs/forms/form-control
 import Col from 'react-bootstrap/Col';
@@ -28,42 +29,32 @@ function Register() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            setData(null);
             if (inputs.password != inputs.retypePassword) //בדיקה שהסיסמא זהה בשתי השדות
                 return setMessage("Password do not match.");
 
-            const fetchResponse = await fetch("http://localhost:5000/user/register", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    username: inputs.username,
-                    password: inputs.password,
-                    firstName: inputs.firstName,
-                    lastName: inputs.lastName,
-                    age: inputs.age,
-                    email: inputs.email,
-                    status: 0 //ברירת מחדש משתמש רגיל
-                })
-            });
-            setData(null);
-            setStatus(`${fetchResponse.status}`);
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            const dataJSON = await fetchResponse.json();
-            setMessage("ההרשמה בוצעה בהצלה, בעוד 10 שניות תועבר לעמוד ההתחברות.");
+            // מידע להעברה
+            let tempData = {
+                username: inputs.username,
+                password: inputs.password,
+                firstName: inputs.firstName,
+                lastName: inputs.lastName,
+                age: inputs.age,
+                email: inputs.email,
+                status: 0 //ברירת מחדש משתמש רגיל
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/user/register", null, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
 
+            setMessage("ההרשמה בוצעה בהצלה, בעוד 10 שניות תועבר לעמוד ההתחברות.");
             setTimeout(() => {
                 navigate("/login");
             }, 10000);
-
-            //setData([dataJSON]);
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
 

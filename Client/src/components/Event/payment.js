@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import { useNavigate } from 'react-router-dom';
-import { checkLogin, fetch_URL_GET } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 import styled from 'styled-components';
 import Form from 'react-bootstrap/Form'; //https://react-bootstrap.netlify.app/docs/forms/form-control
 import Col from 'react-bootstrap/Col';
@@ -13,25 +13,15 @@ const MainContent = styled.div`
     margin-left: 1%; // Adjust this value as needed
 `;
 
-function Payment () {
+function Payment() {
     const token = localStorage.getItem('jwt-token');
     const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
     checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
     const [inputs, setInputs] = useState({}); //עבור התיבות טקסט
-    const [data, setData] = useState(null); // מידע שהתקבל מבסיס הנתונים
+    const [data, setData] = useState(null); //  מידע שהתקבל מבסיס הנתונים
     const [status, setStatus] = useState(""); // עבור מצב הבקשה כמספר כגון 200 - תקין
     const [message, setMessage] = useState(""); // עבור הודעה שיצרנו שמתקבלת בפניה לשרת
-/*
-    const initialFormData = {
-        cardHolderName: '',
-        cardNumber: '',
-        cardHolderID: '',
-        expiryDate: '',
-        securityCode: '',
-        totalCost: ''
-    }
-    const [formData, setFormData] = useState(initialFormData); // עבור התיבות בחירה*/
 
     //window.location.search - (?eventID=abc&name=bbb לדוגמה )מכילה את החלק שאני שולחת בניתוב במקרה שלי אני יקבל 
     // URLSearchParams - הצבת הערך שמתקבל בבנאי זה על מנת לשלוף ולעדכין מאת המידע בצורה מסודרת 
@@ -42,29 +32,23 @@ function Payment () {
     // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
     async function fetchData(eventID) {
         try {
-
             const fetchData = await fetch_URL_GET(`http://localhost:5000/event/findOneEvent?eventID=${eventID}`, token);
             setStatus(fetchData.status);
             setMessage(fetchData.message);
             setData(fetchData.data);
 
             let totalPrice = 0;
-            fetchData.data.meals.forEach((item, index) => {
-                if (item != null) {
-                    //console.log("Index: " + index + " Meal: " + JSON.stringify(item))
+            fetchData.data.meals.forEach((item) => {
+                if (item != null)
                     totalPrice += item.price;
-                }
             });
-            fetchData.data.decorations.forEach((item, index) => {
-                if (item != null) {
-                    //console.log("Index: " + index + " Decoration: " + JSON.stringify(item))
+            fetchData.data.decorations.forEach((item) => {
+                if (item != null)
                     totalPrice += item.price;
-                }
             });
-            console.log("Total Price: " + totalPrice)
-            setInputs(values => ({ ...values, ["totalCost"]: totalPrice })) 
+            setInputs(values => ({ ...values, ["totalCost"]: totalPrice }))
         } catch (error) {
-            console.error(error);
+            console.error(`[Error] ${error}`);
         }
     }
 
@@ -81,36 +65,19 @@ function Payment () {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            const fetchResponse = await fetch("http://localhost:5000/event/updatePayment", { // לאיזה כתובת לפנות 
-                method: "POST", // שיטה הפניה
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify(
-                    { // המרת המידעה שנשלח כבדי מהטופס לאקספרס
-                        // האינפוט הוא המידעה שנרשם בטופס
-                        eventID: query_eventid,
-                        data: JSON.stringify({ payments : inputs }),
-                    })
-            });
-            console.log("Inputs: "+ JSON.stringify(inputs))
-            setData(null);
-            setStatus(`${fetchResponse.status}`);
-            //ok אם הסטטוס שונה מ200 שהוא
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            const dataJSON = await fetchResponse.json();
-            
-            setMessage("Success");
-            setData([dataJSON]);
-            //fetchData(query_eventid);
-            //navigate(`/selectADecoration?eventid=${dataJSON._id}`);
+            // מידע להעברה
+            let tempData = {
+                eventID: query_eventid,
+                data: JSON.stringify({ payments: inputs }),
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/event/updatePayment", token, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
     return (
@@ -187,7 +154,6 @@ function Payment () {
                                 value={inputs.totalCost || ""} />
                         </Col>
                     </Form.Group>
-
                     <div className="d-grid gap-2">
                         <Button variant="primary" size="lg" type="submit">Payment</Button>
                         <p>[STATUS] {status}</p>

@@ -3,7 +3,7 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import Table from 'react-bootstrap/Table';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -21,48 +21,29 @@ function AllEvents() {
 
     async function DeleteEvent(eventID) {
         try {
-            const fetchResponse = await fetch(`http://localhost:5000/event/deleteEvent?eventID=${eventID}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            setStatus(`${fetchResponse.status}`);
-            let responseText = await fetchResponse.text();
-            setMessage(responseText);
+            const fetchData = await fetch_URL_GET(`http://localhost:5000/event/deleteEvent?eventID=${eventID}`, token);
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
         } catch (error) {
-            console.error(error);
+            console.error(`[Error] ${error}`);
         }
     }
 
     async function fetchData() {
         try {
-            const fetchResponse = await fetch("http://localhost:5000/event/allEvents", {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            setStatus(`${fetchResponse.status}`);
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success"); //TEMP
-            setData(dataJSON);
+            const fetchData = await fetch_URL_GET("http://localhost:5000/event/allEvents", token);
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
         } catch (error) {
-            console.error(error);
+            console.error(`[Error] ${error}`);
         }
     }
 
     useEffect(() => {
         fetchData();
     }, []); // Empty array means this effect runs once on mount
-
 
     return (
         <div>

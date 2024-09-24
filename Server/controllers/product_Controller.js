@@ -75,11 +75,11 @@ exports.deleteProductByID = async (request, result) => {
 exports.findProductByCategory = async (request, result) => {
     try {
         let data = null
-        let category = request.body.category
+        let category = request.query.category
         if (category == "" || category == null)
             data = await Product.find(); // מחזיר את כל המוצרים ללא סינון קטגוריות
         else
-            data = await Product.find({ category: request.body.category });
+            data = await Product.find({ category: request.query.category });
         if (data.length === 0) {
             return result.status(400).send('אין בקטגוריה זו אף מוצר'); //throw new Error
         }

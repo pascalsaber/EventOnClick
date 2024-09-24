@@ -3,7 +3,7 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
-import { checkLogin, fetch_URL_GET } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -43,17 +43,15 @@ function SelectAMeal() {
 
     // מטרת הפונקציה זה להחזיר את המוצרים עם כל הפרטים על כל מוצר לפי קטגוריה 
     async function fetch_findProductByCategory(category) {
-        //לשרת עם הקטגוריה שנבחרה POST שולח בקשת
-        const fetchResponse = await fetch(`http://localhost:5000/product/findProductByCategory`, {
-            method: "POST", // שיטה הפניה
-            headers: {
-                "Content-Type": "application/json",
-                'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-            }
-        });
-        if (fetchResponse.ok) { // בודק אם הבקשה הצליחה
-            let responseJSON = await fetchResponse.json(); //JSON- ממיר את התגובה ל
-            setProducts(responseJSON);
+        try {
+            // פניה לשרת
+            const fetchData = await fetch_URL_GET(`http://localhost:5000/product/findProductByCategory`, token);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setProducts(fetchData.data)
+        } catch (error) {
+            console.error(`[Error] ${error}`);
         }
     }
     // הפונקציה הזו נועדה להביא נתונים על אירוע מסוים מהשרת ולעדכן את המצב בהתאם
@@ -76,8 +74,7 @@ function SelectAMeal() {
                 }
             });
         } catch (error) {
-            // מדפיס שגיאה אם יש
-            console.error(error);
+            console.error(error); // מדפיס שגיאה אם יש
         }
     }
 
@@ -108,14 +105,11 @@ function SelectAMeal() {
         // על מנת לא לאבד את הנתונים שהצבנו באינפותים ועל מנת לעדכין את השינויים בשרת 
         event.preventDefault();
         try {
-            //            for (let i = 1; i <= 2; i++) {
-            //    let decoration = formData[`option${i}`]
-            Object.keys(formData).forEach(key => {
-                const meal = formData[key];
+            for (let i = 1; i <= 4; i++) { //  Object.keys(formData).forEach(key => {
+                let meal = formData[`option${i}`] //  let meal = formData[key];
                 if (meal != null) {
                     // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
                     // על מנת להעזר בה בלדעת את מחיר המוצר
-                    console.log("firstMeal: " + meal.firstMeal)
                     if (meal.firstMeal == "" || meal.secondMeal == "" || meal.salad == "")
                         return
                     const filter_firstMeal = products.filter(item => item.name === meal.firstMeal);
@@ -123,34 +117,23 @@ function SelectAMeal() {
                     const filter_salad = products.filter(item => item.name === meal.salad);
                     meal.price = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
                 }
-            })
-            const fetchResponse = await fetch("http://localhost:5000/event/updateMealsOrDecoration", { // לאיזה כתובת לפנות 
-                method: "POST", // שיטה הפניה
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify(
-                    { // המרת המידעה שנשלח כבדי מהטופס לאקספרס
-                        // האינפוט הוא המידעה שנרשם בטופס
-                        eventID: query_eventid,
-                        data: JSON.stringify({ meals: formData }),
-                    })
-            });
-            setData(null);
-            setStatus(`${fetchResponse.status}`);
-            //ok אם הסטטוס שונה מ200 שהוא
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
             }
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success");
-            fetchData(query_eventid);
-            // navigate(`/selectADecoration?eventid=${dataJSON._id}`);
+
+            // מידע להעברה
+            let tempData = {
+                eventID: query_eventid,
+                data: JSON.stringify({ meals: formData }),
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/event/updateMealsOrDecoration", token, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
+
+            //fetchData(query_eventid); //טעינה מחדש לנתונים מהשרת
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
     return (

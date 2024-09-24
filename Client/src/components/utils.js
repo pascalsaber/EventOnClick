@@ -26,6 +26,35 @@ export async function fetch_URL_GET(url, token) {
                 'Authorization': `Bearer ${token}`// שיטת ההצפנה 
             }
         });
+        if (!response.ok) { //response.status != 200
+            let responseText = await response.text();
+            return ({
+                status: response.status,
+                message: responseText,
+                data: null //לא מצפים למידע תקין
+            })
+        }
+        const dataJSON = await response.json();
+        return ({
+            status: response.status,
+            message: "Success",
+            data: dataJSON //המידע שהתקבל מהשרת
+        })
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export async function fetch_URL_POST(url, token, tempData) {
+    try {
+        const response = await fetch(url, { // לאיזה כתובת לפנות 
+            method: "POST", // שיטה הפניה 
+            headers: {
+                "Content-Type": "application/json",
+                'Authorization': `Bearer ${token}`// שיטת ההצפנה 
+            },
+            body: JSON.stringify(tempData) // body = tempData
+        });
         if (!response.ok) {
             let responseText = await response.text();
             return ({

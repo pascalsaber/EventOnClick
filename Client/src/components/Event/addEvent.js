@@ -3,7 +3,7 @@ import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import Button from 'react-bootstrap/Button';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -33,29 +33,14 @@ function AddEvent() {
     useEffect(() => {
         async function fetchEventByID() {
             try {
-                //eventID לשרת עם get שולח בקשת 
-                const fetchResponse = await fetch(`http://localhost:5000/event/findOneEvent?eventID=${query_eventid}`, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                // מעדכן את הסטטוס של הבקשה
-                setStatus(`${fetchResponse.status}`);
-                // בודק אם הבקשה לא הצליחה
-                if (!fetchResponse.ok) {
-                    let responseText = await fetchResponse.text();
-                    setMessage(responseText);
-                    throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-                }
-                //JSON -ממיר את התגובה ל
-                const dataJSON = await fetchResponse.json();
-                setMessage("Success");
-                setData(dataJSON);
-                setInputs(dataJSON);
+                const fetchData = await fetch_URL_GET(`http://localhost:5000/event/findOneEvent?eventID=${query_eventid}`, token);
+                setStatus(fetchData.status);
+                setMessage(fetchData.message);
+                setData(fetchData.data);
+
+                setInputs(fetchData.data);
             } catch (error) {
-                console.error(error);
+                console.error(`[Error] ${error}`);
             }
         }
         if (query_eventid)
@@ -64,11 +49,13 @@ function AddEvent() {
 
     useEffect(() => {
         async function fetch_enum(type) {
-            const fetchResponse = await fetch(`http://localhost:5000/event/returnEnumListByType?type=${type}`);
-            if (fetchResponse.ok) {
-                let responseJSON = await fetchResponse.json();
+            try {
+                const fetchData = await fetch_URL_GET(`http://localhost:5000/event/returnEnumListByType?type=${type}`, token);
+                setStatus(fetchData.status);
+                setMessage(fetchData.message);
+                setData(fetchData.data);
                 let list = [{ value: "", label: "Select..." }];
-                responseJSON.map((item) => {
+                fetchData.data.map((item) => {
                     list.push({
                         value: item,
                         label: item
@@ -78,6 +65,8 @@ function AddEvent() {
                     setEnumLocationList(list);
                 else if (type == "type")
                     setEnumTypeList(list);
+            } catch (error) {
+                console.error(`[Error] ${error}`);
             }
         }
         fetch_enum("location");
@@ -92,43 +81,30 @@ function AddEvent() {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
-        let URL = "http://localhost:5000/event/add";
-        if (query_eventid)
-            URL = `http://localhost:5000/event/updateEventByID?eventid=${query_eventid}`;
         try {
-            const fetchResponse = await fetch(URL, { // לאיזה כתובת לפנות 
-                method: "POST", // שיטה הפניה 
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify({ // המרת המידעה שנשלח כבדי מהטופס לאקספרס
-                    // האינפוט הוא המידעה שנרשם בטופס
-                    name: inputs.name,
+            let URL = "http://localhost:5000/event/add";
+            if (query_eventid)
+                URL = `http://localhost:5000/event/updateEventByID?eventid=${query_eventid}`;
+            // מידע להעברה
+            let tempData = {
+                name: inputs.name,
                     date: inputs.date,
                     location: inputs.location,
                     type: inputs.type,
                     notes: inputs.notes,
                     status: "Open" //Closed
-                })
-            });
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST(URL, token, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
 
-            setData(null);
-            setStatus(`${fetchResponse.status}`);
-            //ok אם הסטטוס שונה מ200 שהוא
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            // מכיל את המידע שחוזר מהאקספרס שהוא בעצם האירוע החדש שיצרנו
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success");
-            setData([dataJSON]);
-            setquery_eventid(dataJSON._id)
+            setquery_eventid(fetchData.data._id)
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
 

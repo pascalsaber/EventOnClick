@@ -3,7 +3,7 @@ const router = express.Router();
 const productController = require("../controllers/product_Controller");
 
 router.post("/add", productController.add);
-router.post("/findProductByCategory", productController.findProductByCategory);
+router.get("/findProductByCategory", productController.findProductByCategory);
 router.post("/updateProductByID", productController.updateProductByID);
 router.post("/deleteProductByID", productController.deleteProductByID);
 router.get("/returnEnumListByType", productController.returnEnumListByType);

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 import Form from 'react-bootstrap/Form'; //https://react-bootstrap.netlify.app/docs/forms/form-control
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
@@ -29,31 +30,22 @@ function Login() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            //העברת מידע מהטופס לשרת בצורת גסון
-            const fetchResponse = await fetch("http://localhost:5000/user/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    username: inputs.username,
-                    password: inputs.password
-                })
-            });
+            // מידע להעברה
+            let tempData = {
+                username: inputs.username,
+                password: inputs.password
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/user/login", null, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
 
-            setData(null);//TEMP
-            setStatus(`${fetchResponse.status}`);
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-
-            const dataJSON = await fetchResponse.json(); //TEMP
-            setMessage("Success"); //TEMP
-            setData([dataJSON.data]); //TEMP
-            localStorage.setItem("jwt-token", dataJSON.token);
+            localStorage.setItem("jwt-token", fetchData.data.token);
             navigate("/allEvents");
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
 

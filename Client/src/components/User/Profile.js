@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
-import { checkLogin } from '../utils';
+import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -22,37 +22,24 @@ function Profile() {
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
         try {
-            setData(null);
             if (inputs.password != inputs.retypePassword) //בדיקה שהסיסמא זהה בשתי השדות
                 return setMessage("Password do not match.");
-            const fetchResponse = await fetch("http://localhost:5000/user/updateUserByID", { // לאיזה כתובת לפנות 
-                method: "POST", // שיטה הפניה 
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                },
-                body: JSON.stringify({ // המרת המידעה שנשלח כבדי מהטופס לאקספרס
-                    // האינפוט הוא המידעה שנרשם בטופס
-                    firstName: inputs.firstName,
-                    lastName: inputs.lastName,
-                    email: inputs.email,
-                    password: inputs.password
-                })
-            });
 
-            setStatus(`${fetchResponse.status}`);
-            //ok אם הסטטוס שונה מ200 שהוא
-            if (!fetchResponse.ok) {
-                let responseText = await fetchResponse.text();
-                setMessage(responseText);
-                throw new Error(`[Error] Status: ${fetchResponse.status} Message: ${responseText}`);
-            }
-            // מכיל את המידע שחוזר מהאקספרס שהוא בעצם האירוע החדש שיצרנו
-            const dataJSON = await fetchResponse.json();
-            setMessage("Success");
-            setData([dataJSON]);
+            // מידע להעברה
+            let tempData = {
+                firstName: inputs.firstName,
+                lastName: inputs.lastName,
+                email: inputs.email,
+                password: inputs.password
+            };
+            // פניה לשרת
+            const fetchData = await fetch_URL_POST("http://localhost:5000/user/updateUserByID", token, tempData);
+            // הצוות נתונים במשתנים
+            setStatus(fetchData.status);
+            setMessage(fetchData.message);
+            setData(fetchData.data);
         } catch (error) {
-            console.error(`[HandleSubmit Error] ${error}`);
+            console.error(`[Error] ${error}`);
         }
     }
 
@@ -65,29 +52,15 @@ function Profile() {
     useEffect(() => {
         async function fetchData() {
             try {
-                const fetchResponse = await fetch("http://localhost:5000/user/profile", { // לאיזה כתובת לפנות 
-                    method: "GET", // שיטה הפניה 
-                    headers: {
-                        "Content-Type": "application/json",
-                        'Authorization': `Bearer ${token}`// שיטת ההצפנה 
-                    }
-                });
+                const fetchData = await fetch_URL_GET(`http://localhost:5000/user/profile`, token);
+                setStatus(fetchData.status);
+                setMessage(fetchData.message);
+                setData(fetchData.data);
 
-                setStatus(`${fetchResponse.status}`);
-                if (!fetchResponse.ok) {
-                    let responseText = await fetchResponse.text();
-                    setMessage(responseText);
-                    throw new Error(`[Error] Status: ${fetchResponse.status} Response: ${responseText}`);
-                }
-
-                const dataJSON = await fetchResponse.json();
-                setMessage("Success");
-                setData([dataJSON]);
-
-                setInputs(values => ({ ...values, ['username']: dataJSON.userData.username }))
-                setInputs(values => ({ ...values, ["firstName"]: dataJSON.userData.firstName }))
-                setInputs(values => ({ ...values, ["lastName"]: dataJSON.userData.lastName }))
-                setInputs(values => ({ ...values, ["email"]: dataJSON.userData.email }))
+                setInputs(values => ({ ...values, ['username']: fetchData.data.userData.username }))
+                setInputs(values => ({ ...values, ["firstName"]: fetchData.data.userData.firstName }))
+                setInputs(values => ({ ...values, ["lastName"]: fetchData.data.userData.lastName }))
+                setInputs(values => ({ ...values, ["email"]: fetchData.data.userData.email }))
             } catch (error) {
                 console.error(error);
             }
