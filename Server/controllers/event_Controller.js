@@ -37,23 +37,11 @@ exports.returnEnumListByType = async (request, result) => {
     }
 }
 
-exports.allEvents = async (request, result) => {
+exports.allEvents =[authenticateToken, async (request, result) => {
     try {
-        // ייבוא מודול לפענוח הטוקן
-        const jwt = require('jsonwebtoken');
-        // חילוץ הטוקן מהכותרת של הבקשה
-        const token = request.headers.authorization.split(' ')[1]; // Extract token from header
-        // פענוח הטוקן באמצעות המפתח הסודי
-        const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
-        // שהתקבל מהטוקן ID-חיפוש המשתמש במסד הנתונים לפי ה
-        const data = await User.findOne({ _id: decoded._id });
-        //אם המשתמש לא נמצא, חוזרת שגיאה
-        if (!data) {
-            return result.status(400).send('No such ID in the database.'); //throw new Error
-        }
         // אם קיים המשתמש
         // של המשתמש ID-מחפש את כל האירועים במסד הנתונים שקשורים ל
-        const allEvents = await Event.find({ userID: decoded._id });
+        const allEvents = await Event.find({ userID: request.userData._id });
         // אם לא נמצאו אירועים, מחזיר הודעת שגיאה עם סטטוס (לא מורשה)
         if (allEvents.length == 0) {
             return result.status(400).send('No events in the database.'); //throw new Error
@@ -64,40 +52,29 @@ exports.allEvents = async (request, result) => {
     } catch (error) {
         result.status(500).send(error.message);
     }
-}
-
-exports.findOneEvent = async (request, result) => {
-    try {
-        // ייבוא מודול לפענוח הטוקן
-        const jwt = require('jsonwebtoken');
-        // חילוץ הטוקן מהכותרת של הבקשה
-        const token = request.headers.authorization.split(' ')[1];
-        // פענוח הטוקן באמצעות המפתח הסודי
-        const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET);
-
+}];
+exports.findOneEvent =[authenticateToken, async (request, result) => {
+    try { 
         // חיפוש המשתמש במסד הנתונים לפי ה-ID שהתקבל מהטוקן
-        const user = await User.findById(decoded._id);
+        const user = await User.findById(request.userData._id);
         if (!user) {
             return result.status(400).send('No such user in the database.');
         }
-
         // חיפוש האירוע לפי ה-ID שהתקבל מהבקשה
         const event = await Event.findById(request.query.eventID);
         if (!event) {
             return result.status(400).send('Event not found.');
         }
-
         // בדיקה אם האירוע שייך למשתמש
-        if (event.userID.toString() !== user._id.toString()) {
+        if (event.userID.toString() !== request.userData._id.toString()) {
             return result.status(403).send('Event does not belong to the user.');
         }
-
         // החזרת פרטי האירוע
         result.send(event);
     } catch (error) {
         result.status(500).send(error.message);
     }
-};
+}];
 
 exports.updateEventByID = [authenticateToken, async (request, result) => {
     let event = await Event.findById({ _id: request.query.eventid }); //חיפוש אירוע לפי מפתח

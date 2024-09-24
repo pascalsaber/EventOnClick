@@ -47,12 +47,14 @@ const userSchema = new Schema({
                 throw new Error(`Invalid email format: ${value}`);
         }
     },
+    // משתמש רגיל יקבל סטטוס 1
+    // משתמש מנהל יקבל סטטוס 0
     status: {
         type: Number,
         trim: true,
         required: true,
     }
-    //events: [{ type: Schema.Types.ObjectId, ref: 'Event' }]
+   
 });
 
 //Token פונקציה לייצרת
