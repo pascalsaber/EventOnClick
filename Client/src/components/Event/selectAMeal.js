@@ -108,8 +108,10 @@ function SelectAMeal() {
         // על מנת לא לאבד את הנתונים שהצבנו באינפותים ועל מנת לעדכין את השינויים בשרת 
         event.preventDefault();
         try {
-            for (let i = 1; i <= 4; i++) {
-                let meal = formData[`option${i}`]
+            //            for (let i = 1; i <= 2; i++) {
+            //    let decoration = formData[`option${i}`]
+            Object.keys(formData).forEach(key => {
+                const meal = formData[key];
                 if (meal != null) {
                     // מסנן את רשימת הארוחות לפי הארוחה הראשונה והשנייה
                     // על מנת להעזר בה בלדעת את מחיר המוצר
@@ -121,7 +123,7 @@ function SelectAMeal() {
                     const filter_salad = products.filter(item => item.name === meal.salad);
                     meal.price = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
                 }
-            }
+            })
             const fetchResponse = await fetch("http://localhost:5000/event/updateMealsOrDecoration", { // לאיזה כתובת לפנות 
                 method: "POST", // שיטה הפניה
                 headers: {
