@@ -9,20 +9,19 @@ const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
     margin-left: 1%; // Adjust this value as needed
 `;
-function PrintAll() {
+function AllProducts() {
   const token = localStorage.getItem('jwt-token');
   const navigate = useNavigate(); // פונקציה של ריאקט דום להעברת מידע בזמן מעבר לעמוד אחר   
   checkLogin(navigate, token); // בדיקה שהמשתמש מחובר והתוקן תקין
 
   const [data, setData] = useState(null);
-  const [inputs, setInputs] = useState({});
   const [status, setStatus] = useState("");
   const [message, setMessage] = useState("");
 
   useEffect(() => {
     async function main() {
       try {
-        const fetchData = await fetch_URL_GET("http://localhost:5000/user/printall", token);
+        const fetchData = await fetch_URL_GET("http://localhost:5000/product/findProductByCategory", token);
         setStatus(fetchData.status);
         setMessage(fetchData.message);
         setData(fetchData.data);
@@ -46,10 +45,9 @@ function PrintAll() {
                   <tr>
                     <th>Index</th>
                     <th>ID</th>
-                    <th>Username</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Price</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -57,10 +55,9 @@ function PrintAll() {
                     <tr key={index}>
                       <td>{index}</td>
                       <td>{item._id}</td>
-                      <td>{item.username}</td>
-                      <td>{item.firstName}</td>
-                      <td>{item.lastName}</td>
-                      <td>{item.email}</td>
+                      <td>{item.name}</td>
+                      <td>{item.category}</td>
+                      <td>{item.price}</td>
                     </tr>
                   )) : <tr><td colSpan="6">Loading...</td></tr>}
                 </tbody>
@@ -85,4 +82,4 @@ function PrintAll() {
   );
 }
 
-export default PrintAll;
+export default AllProducts;

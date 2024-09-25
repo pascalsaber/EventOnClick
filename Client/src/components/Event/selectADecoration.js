@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import Button from 'react-bootstrap/Button';
+import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
@@ -116,14 +116,14 @@ function SelectADecoration() {
                 if (decoration != null) {
                     if (decoration.table == "" || decoration.map == "" || decoration.extra1 == "" || decoration.extra2 == "")
                         return
-                    const filter_table = products.filter(item => item.name === decoration.table);
-                    const filter_map = products.filter(item => item.name === decoration.map);
-                    const filter_extra1 = products.filter(item => item.name === decoration.extra1);
-                    const filter_extra2 = products.filter(item => item.name === decoration.extra2);
+                    const filter_table = products.filter(item => item._id === decoration.table);
+                    const filter_map = products.filter(item => item._id === decoration.map);
+                    const filter_extra1 = products.filter(item => item._id === decoration.extra1);
+                    const filter_extra2 = products.filter(item => item._id === decoration.extra2);
                     decoration.price = (filter_table[0].price + filter_map[0].price + filter_extra1[0].price + filter_extra2[0].price) * decoration.amount;
                 }
             }
-            
+
             // מידע להעברה
             let tempData = {
                 eventID: query_eventid,
@@ -155,7 +155,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Table")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -166,7 +166,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Map")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -177,7 +177,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Extra1")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -188,7 +188,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Extra1")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -208,7 +208,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Table")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -219,7 +219,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Map")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -230,7 +230,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Extra1")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -241,7 +241,7 @@ function SelectADecoration() {
                             {products
                                 .filter(item => item.category === "Extra1")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -253,11 +253,20 @@ function SelectADecoration() {
                         Total Price:
                         <input disabled type="number" name="option2.price" value={formData.option2.price} />
                     </label>
-                    <input type="submit" value="Update" />
-                    {query_eventid ?
-                        <Button variant="primary" size="lg" onClick={() => navigate(`/payment?eventid=${query_eventid}`)} >Next Page</Button>
-                        : <></>
-                    }
+                    <Container fluid>
+                        <Row className="justify-content-center">
+                            <Col xs={12} md={10}>
+                                {Object(data).status === "Open" ?
+                                    <input type="submit" value="Update" />
+                                    : (<Alert variant="danger" className="text-center">אירוע זה סגור.</Alert>)
+                                }
+                                {query_eventid ?
+                                    <Button variant="primary" size="lg" onClick={() => navigate(`/payment?eventid=${query_eventid}`)} >Next Page</Button>
+                                    : <></>
+                                }
+                            </Col>
+                        </Row>
+                    </Container>
                     <p>[MESSAGE] {message}</p>
                     {process.env.REACT_APP_TESTING === 'TRUE' ?
                         <>

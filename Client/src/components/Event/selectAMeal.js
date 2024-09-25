@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import Button from 'react-bootstrap/Button';
+import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
@@ -112,9 +112,9 @@ function SelectAMeal() {
                     // על מנת להעזר בה בלדעת את מחיר המוצר
                     if (meal.firstMeal == "" || meal.secondMeal == "" || meal.salad == "")
                         return
-                    const filter_firstMeal = products.filter(item => item.name === meal.firstMeal);
-                    const filter_secondMeal = products.filter(item => item.name === meal.secondMeal);
-                    const filter_salad = products.filter(item => item.name === meal.salad);
+                    const filter_firstMeal = products.filter(item => item._id === meal.firstMeal);
+                    const filter_secondMeal = products.filter(item => item._id === meal.secondMeal);
+                    const filter_salad = products.filter(item => item._id === meal.salad);
                     meal.price = (filter_firstMeal[0].price + filter_secondMeal[0].price + filter_salad[0].price) * meal.amount;
                 }
             }
@@ -150,7 +150,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "First Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -161,7 +161,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Second Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -172,7 +172,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Salad")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -192,7 +192,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "First Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -203,7 +203,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Second Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -214,7 +214,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Salad")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -234,7 +234,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "First Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select></label>
                     <label>
@@ -244,7 +244,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Second Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -255,7 +255,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Salad")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -275,7 +275,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "First Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select></label>
                     <label>
@@ -285,7 +285,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Second Meal")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -296,7 +296,7 @@ function SelectAMeal() {
                             {products
                                 .filter(item => item.category === "Salad")
                                 .map(item => (
-                                    <option value={item.name}>{item.name} ({item.price})₪</option>
+                                    <option value={item._id}>{item.name} ({item.price})₪</option>
                                 ))}
                         </select>
                     </label>
@@ -308,11 +308,20 @@ function SelectAMeal() {
                         Total Price:
                         <input disabled type="number" name="option4.price" value={formData.option4.price} />
                     </label>
-                    <input type="submit" value="Update" />
-                    {query_eventid ?
-                        <Button variant="primary" size="lg" onClick={() => navigate(`/selectADecoration?eventid=${query_eventid}`)} >Next Page</Button>
-                        : <></>
-                    }
+                    <Container fluid>
+                        <Row className="justify-content-center">
+                            <Col xs={12} md={10}>
+                                {Object(data).status === "Open" ?
+                                    <input type="submit" value="Update" />
+                                    : (<Alert variant="danger" className="text-center">אירוע זה סגור.</Alert>)
+                                }
+                                {query_eventid ?
+                                    <Button variant="primary" size="lg" onClick={() => navigate(`/selectADecoration?eventid=${query_eventid}`)} >Next Page</Button>
+                                    : <></>
+                                }
+                            </Col>
+                        </Row>
+                    </Container>
                     <p>[MESSAGE] {message}</p>
                     {process.env.REACT_APP_TESTING === 'TRUE' ?
                         <>

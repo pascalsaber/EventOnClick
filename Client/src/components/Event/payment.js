@@ -3,10 +3,8 @@ import Menu from '../menu'; // make sure the path is correct
 import { useNavigate } from 'react-router-dom';
 import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 import styled from 'styled-components';
-import Form from 'react-bootstrap/Form'; //https://react-bootstrap.netlify.app/docs/forms/form-control
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-import Button from 'react-bootstrap/Button';
+import { Button, Container, Row, Col, Alert } from 'react-bootstrap';
+import Form from 'react-bootstrap/Form';
 
 const MainContent = styled.div`
     margin-right: 1%; // Adjust this value as needed
@@ -64,11 +62,14 @@ function Payment() {
 
     const handleSubmit = async (event) => {
         event.preventDefault(); //לא לבצע רענון לעמוד
+
         try {
+           //if (inputs.totalCost <= 0)
+            //    return setMessage("חובה לעדכן את הטפרית הארוחות ועיצוב, לא ניתן לסגור אירוע בסכום של 0 שקלים.")
             // מידע להעברה
             let tempData = {
                 eventID: query_eventid,
-                data: JSON.stringify({ payments: inputs }),
+                data: JSON.stringify({ status: "Closed", payments: inputs }),
             };
             // פניה לשרת
             const fetchData = await fetch_URL_POST("http://localhost:5000/event/updatePayment", token, tempData);
@@ -98,67 +99,78 @@ function Payment() {
                                 value={inputs.cardHolderName || ""}
                                 onChange={handleChange} />
                         </Col>
-                        <Form.Label column sm="2">card Number</Form.Label>
+                        <Form.Label column sm="2">Card Number</Form.Label>
                         <Col sm="10">
                             <Form.Control
                                 required
                                 size="sm"
-                                placeholder="Enter your cardNumber"
+                                placeholder="Enter your Card Number"
                                 type="text"
                                 name="cardNumber"
                                 value={inputs.cardNumber || ""}
                                 onChange={handleChange} />
                         </Col>
-                        <Form.Label column sm="2">card Holder ID</Form.Label>
+                        <Form.Label column sm="2">Card Holder ID</Form.Label>
                         <Col sm="10">
                             <Form.Control
                                 required
                                 size="sm"
-                                placeholder="Enter your cardHolderID"
+                                placeholder="Enter your Card Holder ID"
                                 type="text"
                                 name="cardHolderID"
                                 value={inputs.cardHolderID || ""}
                                 onChange={handleChange} />
                         </Col>
-                        <Form.Label column sm="2">expiry Date</Form.Label>
+                        <Form.Label column sm="2">Expiry Date</Form.Label>
                         <Col sm="10">
                             <Form.Control
                                 required
                                 size="sm"
-                                placeholder="Enter your expiryDate"
+                                placeholder="Enter your Expiry Date"
                                 type="date"
                                 name="expiryDate"
                                 value={inputs.expiryDate || ""}
                                 onChange={handleChange} />
                         </Col>
-                        <Form.Label column sm="2">security Code</Form.Label>
+                        <Form.Label column sm="2">Security Code</Form.Label>
                         <Col sm="10">
                             <Form.Control
                                 required
+                                min="100"
+                                max="999"
                                 size="sm"
-                                placeholder="Enter your securityCode"
+                                placeholder="Enter your Security Code"
                                 type="number"
                                 name="securityCode"
                                 value={inputs.securityCode || ""}
                                 onChange={handleChange} />
                         </Col>
-                        <Form.Label column sm="2">totalCost</Form.Label>
+                        <Form.Label column sm="2">Total Cost</Form.Label>
                         <Col sm="10">
                             <Form.Control
                                 disabled
                                 required
+                                min="1"
                                 size="sm"
-                                placeholder="Enter your totalCost"
+                                placeholder="Total Cost"
                                 type="text"
                                 name="totalCost"
                                 value={inputs.totalCost || ""} />
                         </Col>
                     </Form.Group>
                     <div className="d-grid gap-2">
-                        <Button variant="primary" size="lg" type="submit">Payment</Button>
-                        <p>[STATUS] {status}</p>
+                        {Object(data).status === "Open" ?
+                            <Button variant="primary" size="lg" type="submit">Payment</Button>
+                            : (<Alert variant="danger" className="text-center">אירוע זה סגור.</Alert>)
+                        }
                         <p>[MESSAGE] {message}</p>
-                        <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
+                        {process.env.REACT_APP_TESTING === 'TRUE' ?
+                            <>
+                                <h5>Testing Mode</h5>
+                                <p>[STATUS] {status}</p>
+                                <p>[JSON] {JSON.stringify(data)}</p>
+                            </> : null
+                        }
                     </div>
                 </form>
             </MainContent>

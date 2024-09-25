@@ -1,0 +1,39 @@
+[{
+  "_id": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "username": "pascal",
+  "password": "$2a$10$qgxgLKXnFaIw9jJo32b8tOXtWuY0y9ckVfce/YccUJ9aMNNFpEHnG",
+  "firstName": "Pascal",
+  "lastName": "Saber",
+  "age": 30,
+  "email": "pascalsaber2024@gmail.com",
+  "status": 1,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f04e1cd05c1817c90c65aa"
+  },
+  "username": "maroun",
+  "password": "$2a$10$SMyx2nGUhNNyJi3xM1zdUerK7HGfEYwScDzg74yydZ1k7HcUhwwPi",
+  "firstName": "maroun",
+  "lastName": "tannous",
+  "age": 33,
+  "email": "martoon123@gmail.com",
+  "status": 0,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f303c5ff8ae333c04966ed"
+  },
+  "username": "pascal123",
+  "password": "$2a$10$zaUPAJpfJB.XX.imKasLi.sEyv3Uon9dHAzYYkijnqAzkRCJdSqX.",
+  "firstName": "asdasd",
+  "lastName": "asdasdasd",
+  "age": 55,
+  "email": "pascalsaber2024222@gmail.com",
+  "status": 0,
+  "__v": 0
+}]

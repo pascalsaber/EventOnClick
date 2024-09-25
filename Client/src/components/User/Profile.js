@@ -130,16 +130,14 @@ function Profile() {
                         style={{ marginLeft: '10px' }}
                     />
                     <input type="submit" value="Update" />
-                    <div>
-                        <p>[MESSAGE] {message}</p>
-                        {process.env.REACT_APP_TESTING === 'TRUE' ?
-                            <>
-                                <h5>Testing Mode</h5>
-                                <p>[STATUS] {status}</p>
-                                <p>[JSON] {JSON.stringify(data) /*TEMP*/}</p>
-                            </> : null
-                        }
-                    </div>
+                    <p>[MESSAGE] {message}</p>
+                    {process.env.REACT_APP_TESTING === 'TRUE' ?
+                        <>
+                            <h5>Testing Mode</h5>
+                            <p>[STATUS] {status}</p>
+                            <p>[JSON] {JSON.stringify(data)}</p>
+                        </> : null
+                    }
                 </form>
             </MainContent>
         </div>

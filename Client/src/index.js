@@ -13,8 +13,8 @@ import Profile from './components/User/Profile'
 
 // Admin Components
 import PrintAll from './components/Admin/printall'
-import FindUserByID from './components/Admin/findUserByID'
-
+import AllProducts from "./components/Admin/AllProducts.js";
+import AllUserEvents from "./components/Admin/AllUserEvents.js";
 // Event Components
 import AddEvent from './components/Event/addEvent'
 import SelectAMeal from './components/Event/selectAMeal.js'
@@ -22,8 +22,7 @@ import SelectADecoration from './components/Event/selectADecoration.js'
 import AllEvents from "./components/Event/AllEvents";
 import Payment from "./components/Event/payment.js";
 
-// Product Components
-import AllProducts from "./components/Product/AllProducts.js";
+
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -36,16 +35,17 @@ const router = createBrowserRouter(
       <Route path="/profile" element={<Profile />} />
       <Route path="/logoff" element={<Profile />} />
       {/*Event*/}
-      <Route path="/printall" element={<PrintAll />} />
+      <Route path="/allEvents" element={<AllEvents />} />
       <Route path="/addEvent" element={<AddEvent />} />
       <Route path="/selectAMeal" element={<SelectAMeal />} />
       <Route path="/selectADecoration" element={<SelectADecoration />} />
       <Route path="/payment" element={<Payment />} />
-      {/*Product*/}
-      <Route path="/allproducts" element={<AllProducts />} />
       {/*Admin*/}
-      <Route path="/allEvents" element={<AllEvents />} />
-      <Route path="/findUserByID" element={<FindUserByID />} />
+      <Route path="/printall" element={<PrintAll />} />
+      <Route path="/allproducts" element={<AllProducts />} />
+      <Route path="/allUserEvents" element={<AllUserEvents />} />
+
+   
     </>
   )
 );

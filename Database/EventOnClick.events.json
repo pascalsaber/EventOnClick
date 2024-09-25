@@ -1,0 +1,659 @@
+[{
+  "_id": {
+    "$oid": "66f1a57df4c244b720b9d2ee"
+  },
+  "userID": {
+    "$oid": "66f04e1cd05c1817c90c65aa"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-09-23T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Closed",
+  "meals": [
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 5,
+      "price": 800,
+      "_id": {
+        "$oid": "66f463d6991de4e1a8e887a0"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66eedb18abe379c0ee7f3f4a",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 7,
+      "price": 1120,
+      "_id": {
+        "$oid": "66f463d6991de4e1a8e887a1"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 5,
+      "price": 800,
+      "_id": {
+        "$oid": "66f463d6991de4e1a8e887a2"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66f3ea7d620f031d80fb0d35",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f463d6991de4e1a8e887a3"
+      }
+    }
+  ],
+  "decorations": [
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb3e620f031d80fb0d4f",
+      "extra1": "66f3eb65620f031d80fb0d55",
+      "extra2": "66f3eb65620f031d80fb0d55",
+      "amount": 3,
+      "price": 240,
+      "_id": {
+        "$oid": "66f463e0991de4e1a8e887ec"
+      }
+    },
+    {
+      "table": "66f3eae1620f031d80fb0d41",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb79620f031d80fb0d58",
+      "extra2": "66f3eb79620f031d80fb0d58",
+      "amount": 2,
+      "price": 180,
+      "_id": {
+        "$oid": "66f463e0991de4e1a8e887ed"
+      }
+    }
+  ],
+  "payments": {
+    "cardHolderName": "pascal",
+    "cardNumber": 546456,
+    "cardHolderID": 456,
+    "expiryDate": {
+      "$date": "2024-09-26T00:00:00.000Z"
+    },
+    "securityCode": 123,
+    "totalCost": 3780,
+    "_id": {
+      "$oid": "66f463eb991de4e1a8e88833"
+    }
+  },
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f1a59af4c244b720b9d307"
+  },
+  "userID": {
+    "$oid": "66f04e1cd05c1817c90c65aa"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-09-23T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasdasd",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "payments": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f436c0254590a69cf9d4ef"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "new_event1",
+  "date": {
+    "$date": "2024-10-04T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "EVENT1",
+  "status": "Closed",
+  "meals": [
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66f3eabf620f031d80fb0d3b",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f4378c254590a69cf9d59e"
+      }
+    },
+    {
+      "firstMeal": "66f3db9b620f031d80fb0d21",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f4378c254590a69cf9d59f"
+      }
+    },
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f4378c254590a69cf9d5a0"
+      }
+    },
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 7,
+      "price": 1120,
+      "_id": {
+        "$oid": "66f4378c254590a69cf9d5a1"
+      }
+    }
+  ],
+  "decorations": [
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb3e620f031d80fb0d4f",
+      "extra1": "66f3eb79620f031d80fb0d58",
+      "extra2": "66f3f408620f031d80fb0d5b",
+      "amount": 4,
+      "price": 440,
+      "_id": {
+        "$oid": "66f4379e254590a69cf9d5ef"
+      }
+    },
+    {
+      "table": "66f3eae1620f031d80fb0d41",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb79620f031d80fb0d58",
+      "extra2": "66f3eb65620f031d80fb0d55",
+      "amount": 4,
+      "price": 360,
+      "_id": {
+        "$oid": "66f4379e254590a69cf9d5f0"
+      }
+    }
+  ],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "pascal",
+    "cardNumber": 44444444,
+    "cardHolderID": 1111111111111,
+    "expiryDate": {
+      "$date": "2024-09-28T00:00:00.000Z"
+    },
+    "securityCode": 111,
+    "totalCost": 3840,
+    "_id": {
+      "$oid": "66f43943679163e00cb90228"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f43c7f679163e00cb90369"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "new_event2",
+  "date": {
+    "$date": "2024-09-27T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "EVENT2",
+  "status": "Closed",
+  "meals": [
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66d9e91938fce19c2f876cdb",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 4,
+      "price": 580,
+      "_id": {
+        "$oid": "66f43cab679163e00cb903a9"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66d9e91938fce19c2f876cdb",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 4,
+      "price": 580,
+      "_id": {
+        "$oid": "66f43cab679163e00cb903aa"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f43cab679163e00cb903ab"
+      }
+    },
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f43cab679163e00cb903ac"
+      }
+    }
+  ],
+  "decorations": [
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb65620f031d80fb0d55",
+      "extra2": "66f3eb79620f031d80fb0d58",
+      "amount": 4,
+      "price": 320,
+      "_id": {
+        "$oid": "66f43cc3679163e00cb903f8"
+      }
+    },
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb79620f031d80fb0d58",
+      "extra2": "66f3f408620f031d80fb0d5b",
+      "amount": 4,
+      "price": 440,
+      "_id": {
+        "$oid": "66f43cc3679163e00cb903f9"
+      }
+    }
+  ],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "pascal1",
+    "cardNumber": 2222222222,
+    "cardHolderID": 2222222222,
+    "expiryDate": {
+      "$date": "2024-09-28T00:00:00.000Z"
+    },
+    "securityCode": 111,
+    "totalCost": 3200,
+    "_id": {
+      "$oid": "66f43ce3679163e00cb9045b"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f4413f679163e00cb9077c"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "new_event",
+  "date": {
+    "$date": "2024-10-02T00:00:00.000Z"
+  },
+  "location": "Outside the Hall",
+  "type": "Party",
+  "notes": "נהיחיעח",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f447ff679163e00cb90c25"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "asdasdasd",
+  "date": {
+    "$date": "2024-09-26T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f448ed679163e00cb90d15"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "new_event1",
+  "date": {
+    "$date": "2024-09-28T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Closed",
+  "meals": [
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 1,
+      "price": 160,
+      "_id": {
+        "$oid": "66f4555f14900e25780ec7e3"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66e9cf119fffd5ad599f9972",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 5,
+      "price": 800,
+      "_id": {
+        "$oid": "66f4555f14900e25780ec7e4"
+      }
+    },
+    {
+      "firstMeal": "66f3da18620f031d80fb0d1c",
+      "secondMeal": "66f3e511620f031d80fb0d2c",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 4,
+      "price": 640,
+      "_id": {
+        "$oid": "66f4555f14900e25780ec7e5"
+      }
+    },
+    {
+      "firstMeal": "66f3dcf1620f031d80fb0d24",
+      "secondMeal": "66f3e52d620f031d80fb0d2f",
+      "salad": "66f3eabf620f031d80fb0d3b",
+      "amount": 3,
+      "price": 480,
+      "_id": {
+        "$oid": "66f4555f14900e25780ec7e6"
+      }
+    }
+  ],
+  "decorations": [
+    {
+      "table": "66f3eae1620f031d80fb0d41",
+      "map": "66f3eb49620f031d80fb0d52",
+      "extra1": "66f3eb79620f031d80fb0d58",
+      "extra2": "66f3eb79620f031d80fb0d58",
+      "amount": 4,
+      "price": 360,
+      "_id": {
+        "$oid": "66f4557114900e25780ec832"
+      }
+    },
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb65620f031d80fb0d55",
+      "extra2": "66f3f408620f031d80fb0d5b",
+      "amount": 4,
+      "price": 440,
+      "_id": {
+        "$oid": "66f4557114900e25780ec833"
+      }
+    }
+  ],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "pascal",
+    "cardNumber": 33333333,
+    "cardHolderID": 33333333,
+    "expiryDate": {
+      "$date": "2024-09-28T00:00:00.000Z"
+    },
+    "securityCode": 235,
+    "totalCost": 2880,
+    "_id": {
+      "$oid": "66f456037fd1774752b86c7c"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f44c70679163e00cb90de8"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-10-01T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f44cb0679163e00cb90e2a"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "aasdasd",
+  "date": {
+    "$date": "2024-10-29T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f4500d679163e00cb91084"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-10-09T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasdasd",
+  "status": "Closed",
+  "meals": [
+    {
+      "firstMeal": "66f3db9b620f031d80fb0d21",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66f3eabf620f031d80fb0d3b",
+      "amount": 6,
+      "price": 960,
+      "_id": {
+        "$oid": "66f4502e679163e00cb910ed"
+      }
+    },
+    {
+      "firstMeal": "66f3db9b620f031d80fb0d21",
+      "secondMeal": "66e9cf289fffd5ad599f9975",
+      "salad": "66f3eaad620f031d80fb0d38",
+      "amount": 7,
+      "price": 1120,
+      "_id": {
+        "$oid": "66f4502e679163e00cb910ee"
+      }
+    },
+    {
+      "firstMeal": "66f3d9cc620f031d80fb0d19",
+      "secondMeal": "66f3e557620f031d80fb0d32",
+      "salad": "66eeee1cabe379c0ee7f3f4d",
+      "amount": 5,
+      "price": 800,
+      "_id": {
+        "$oid": "66f4502e679163e00cb910ef"
+      }
+    },
+    {
+      "firstMeal": "66f3e355620f031d80fb0d29",
+      "secondMeal": "66f3e557620f031d80fb0d32",
+      "salad": "66f3eabf620f031d80fb0d3b",
+      "amount": 6,
+      "price": 960,
+      "_id": {
+        "$oid": "66f4502e679163e00cb910f0"
+      }
+    }
+  ],
+  "decorations": [
+    {
+      "table": "66f0298c27915309f9e47fdf",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb65620f031d80fb0d55",
+      "extra2": "66f3eb79620f031d80fb0d58",
+      "amount": 6,
+      "price": 480,
+      "_id": {
+        "$oid": "66f4503c679163e00cb9114b"
+      }
+    },
+    {
+      "table": "66f3eae1620f031d80fb0d41",
+      "map": "66f3eb2f620f031d80fb0d4c",
+      "extra1": "66f3eb65620f031d80fb0d55",
+      "extra2": "66f3eb65620f031d80fb0d55",
+      "amount": 9,
+      "price": 810,
+      "_id": {
+        "$oid": "66f4503c679163e00cb9114c"
+      }
+    }
+  ],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "asdasdasd",
+    "cardNumber": 123123,
+    "cardHolderID": 123123,
+    "expiryDate": {
+      "$date": "2024-09-25T00:00:00.000Z"
+    },
+    "securityCode": 123,
+    "totalCost": 5130,
+    "_id": {
+      "$oid": "66f45075679163e00cb911f7"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f450ff679163e00cb91271"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-10-11T00:00:00.000Z"
+  },
+  "location": "Outside the Hall",
+  "type": "Party",
+  "notes": "EVENT1",
+  "status": "Closed",
+  "meals": [],
+  "decorations": [],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "123123",
+    "cardNumber": 123123123,
+    "cardHolderID": 123123,
+    "expiryDate": {
+      "$date": "2024-09-25T00:00:00.000Z"
+    },
+    "securityCode": 123,
+    "totalCost": 0,
+    "_id": {
+      "$oid": "66f4510c679163e00cb912d7"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f45184679163e00cb913f9"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "new_event1",
+  "date": {
+    "$date": "2024-10-12T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Closed",
+  "meals": [],
+  "decorations": [],
+  "__v": 0,
+  "payments": {
+    "cardHolderName": "asdasdsd",
+    "cardNumber": 123123,
+    "cardHolderID": 123123,
+    "expiryDate": {
+      "$date": "2024-09-25T00:00:00.000Z"
+    },
+    "securityCode": 123,
+    "totalCost": 0,
+    "_id": {
+      "$oid": "66f45199679163e00cb9145f"
+    }
+  }
+},
+{
+  "_id": {
+    "$oid": "66f45209679163e00cb914bf"
+  },
+  "userID": {
+    "$oid": "66eecf594a57a91953bba950"
+  },
+  "name": "asdasd",
+  "date": {
+    "$date": "2024-10-13T00:00:00.000Z"
+  },
+  "location": "Inside the Hall",
+  "type": "Party",
+  "notes": "asdasd",
+  "status": "Open",
+  "meals": [],
+  "decorations": [],
+  "__v": 0
+}]

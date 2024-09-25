@@ -64,7 +64,6 @@ function Register() {
             <MainContent>
                 <br></br>
                 <form class="form" onSubmit={handleSubmit}>
-
                     <Form.Group as={Row} className="mb-1">
                         <Form.Label column sm="2">Username</Form.Label>
                         <Col sm="10">
@@ -151,8 +150,14 @@ function Register() {
                     </Form.Group>
                     <div className="d-grid gap-2">
                         <Button variant="primary" size="lg" type="submit">Register</Button>
-                        <p>[STATUS] {status}</p>
                         <p>[MESSAGE] {message}</p>
+                        {process.env.REACT_APP_TESTING === 'TRUE' ?
+                            <>
+                                <h5>Testing Mode</h5>
+                                <p>[STATUS] {status}</p>
+                                <p>[JSON] {JSON.stringify(data)}</p>
+                            </> : null
+                        }
                     </div>
                 </form>
             </MainContent>

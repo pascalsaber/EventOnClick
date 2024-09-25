@@ -17,9 +17,9 @@ function Menu() {
                     <Nav className="me-auto">
                         {token && admin ?
                             <NavDropdown title="Admin" id="basic-nav-dropdown">
-                                <NavDropdown.Item href="/printall">Get Users</NavDropdown.Item>
-                                <NavDropdown.Item href="/findUserByID">findUserByID</NavDropdown.Item>
-                                <NavDropdown.Item href="/update">Update</NavDropdown.Item>
+                                <NavDropdown.Item href="/printall">Get Users</NavDropdown.Item> 
+                                <NavDropdown.Item href="/AllProducts">Get Products</NavDropdown.Item> 
+                                <NavDropdown.Item href="/AllUserEvents">Get All Users Events </NavDropdown.Item>                        
                             </NavDropdown> : null
                         }
                         {token ?

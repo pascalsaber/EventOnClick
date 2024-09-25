@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import Table from 'react-bootstrap/Table';
+import { Table, Button, Container, Row, Col } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
@@ -25,6 +25,7 @@ function AllEvents() {
             setStatus(fetchData.status);
             setMessage(fetchData.message);
             setData(fetchData.data);
+            window.location.reload();
         } catch (error) {
             console.error(`[Error] ${error}`);
         }
@@ -50,45 +51,68 @@ function AllEvents() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <br></br>
-                <div class="form">
-                    <Table striped bordered hover size="sm">
-                        <thead>
-                            <tr>
-                                <th>Edit</th>
-                                <th>Name</th>
-                                <th>Date</th>
-                                <th>Location</th>
-                                <th>Type</th>
-                                <th>Notes</th>
-                                <th>Status</th>
-                                <th>Delete</th>
-                            </tr>
-                        </thead>
-                        {data ? data.map((item, index) => (
-                            <tbody>
-                                <tr>
-                                    <td><button style={{ width: "50px" }} onClick={() => navigate(`/addEvent?eventid=${item._id}`)}>Edit</button></td>
-                                    <td>{item.name}</td>
-                                    <td>{item.date}</td>
-                                    <td>{item.location}</td>
-                                    <td>{item.type}</td>
-                                    <td>{item.notes}</td>
-                                    <td>{item.status}</td>
-                                    <td><button style={{ width: "50px" }} onClick={() => DeleteEvent(item._id)}>Delete</button></td>
-                                </tr>
-                            </tbody>
-                        )) : <p>Loading...</p>
-                        }
-                    </Table>
-                    <p>[MESSAGE] {message}</p>
-                    {process.env.REACT_APP_TESTING === 'TRUE' ?
-                        <>
-                            <h5>Testing Mode</h5>
-                            <p>[STATUS] {status}</p>
-                            <p>[JSON] {JSON.stringify(data)}</p>
-                        </> : null
-                    }
-                </div>
+                <Container className="form" fluid>
+                    <Row>
+                        <Col>
+                            <Table striped bordered hover size="sm" responsive="sm">
+                                <thead>
+                                    <tr>
+                                        <th>Edit</th>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Location</th>
+                                        <th>Type</th>
+                                        <th>Notes</th>
+                                        <th>Status</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {data ? data.map((item, index) => (
+                                        <tr key={index}>
+                                            <td>
+                                                <Button
+                                                    variant="primary"
+                                                    size="sm"
+                                                    onClick={() => navigate(`/addEvent?eventid=${item._id}`)}
+                                                >
+                                                    Edit
+                                                </Button>
+                                            </td>
+                                            <td>{item.name}</td>
+                                            <td>{item.date}</td>
+                                            <td>{item.location}</td>
+                                            <td>{item.type}</td>
+                                            <td>{item.notes}</td>
+                                            <td>{item.status}</td>
+                                            <td>
+                                                <Button
+                                                    variant="danger"
+                                                    size="sm"
+                                                    onClick={() => DeleteEvent(item._id)}
+                                                >
+                                                    Delete
+                                                </Button>
+                                            </td>
+                                        </tr>
+                                    )) : <tr><td colSpan="8">Loading...</td></tr>}
+                                </tbody>
+                            </Table>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <p>[MESSAGE] {message}</p>
+                            {process.env.REACT_APP_TESTING === 'TRUE' && (
+                                <>
+                                    <h5>Testing Mode</h5>
+                                    <p>[STATUS] {status}</p>
+                                    <p>[JSON] {JSON.stringify(data)}</p>
+                                </>
+                            )}
+                        </Col>
+                    </Row>
+                </Container>
             </MainContent >
         </div >
     );

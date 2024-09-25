@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Menu from '../menu'; // make sure the path is correct
 import styled from 'styled-components';
-import Button from 'react-bootstrap/Button';
+import { Container, Row, Col, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from "react-router-dom";
 import { checkLogin, fetch_URL_GET, fetch_URL_POST } from '../utils';
 
@@ -39,7 +39,7 @@ function AddEvent() {
                 setData(fetchData.data);
 
                 setInputs(fetchData.data);
-                const formattedDate = fetchData.data.date.split('T')[0]; 
+                const formattedDate = fetchData.data.date.split('T')[0];
                 setInputs(values => ({ ...values, ["date"]: formattedDate }))
             } catch (error) {
                 console.error(`[Error] ${error}`);
@@ -78,7 +78,7 @@ function AddEvent() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
-        
+
         setInputs(values => ({ ...values, [name]: value })) //input["id"] = "9snahdf8ui4hi34uh5"
     }
 
@@ -91,11 +91,11 @@ function AddEvent() {
             // מידע להעברה
             let tempData = {
                 name: inputs.name,
-                    date: inputs.date,
-                    location: inputs.location,
-                    type: inputs.type,
-                    notes: inputs.notes,
-                    status: "Open" //Closed
+                date: inputs.date,
+                location: inputs.location,
+                type: inputs.type,
+                notes: inputs.notes,
+                status: "Open" //Closed
             };
             // פניה לשרת
             const fetchData = await fetch_URL_POST(URL, token, tempData);
@@ -103,7 +103,7 @@ function AddEvent() {
             setStatus(fetchData.status);
             setMessage(fetchData.message);
             setData(fetchData.data);
-            console.log('DATE:'+ fetchData.data.date)
+            console.log('DATE:' + fetchData.data.date)
 
             setquery_eventid(fetchData.data._id)
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
@@ -117,57 +117,88 @@ function AddEvent() {
             <Menu /> {/* Here's your Menu component */}
             <MainContent>
                 <br></br>
-                <form class="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
-                    <label>Name</label>
-                    <input
-                        required
-                        type="text"
-                        name="name"
-                        value={inputs.name || ""}
-                        onChange={handleChange}
-                    />
-                    <label>Date</label>
-                    <input
-                        required
-                        type="date"
-                        name="date"
-                        value={inputs.date || ""}
-                        onChange={handleChange}
-                    />
-                    <label>Location</label>
-                    <select name="location" value={inputs.location} onChange={handleChange} required>
-                        {enumLocationList.map((item) => (
-                            <option value={item.value}>{item.label}</option>
-                        ))}
-                    </select>
-                    <label>Type</label>
-                    <select name="type" value={inputs.type} onChange={handleChange} required>
-                        {enumTypeList.map((item) => (
-                            <option value={item.value}>{item.label}</option>
-                        ))}
-                    </select>
-                    <label>Notes</label>
-                    <input
-                        required
-                        type="text"
-                        name="notes"
-                        value={inputs.notes || ""}
-                        onChange={handleChange}
-                    />
-                    <input type="submit" value="Update" />
-                    {query_eventid ?
-                        <Button variant="primary" size="lg" onClick={() => navigate(`/selectAMeal?eventid=${query_eventid}`)} >Next Page</Button>
-                        : <></>
-                    }
-                    <p>[MESSAGE] {message}</p>
-                    {process.env.REACT_APP_TESTING === 'TRUE' ?
-                        <>
-                            <h5>Testing Mode</h5>
-                            <p>[STATUS] {status}</p>
-                            <p>[JSON] {JSON.stringify(data)}</p>
-                        </> : null
-                    }
-                </form>
+                <Container className="form" fluid>
+                    <Row className="justify-content-center">
+                        <Col xs={12} md={10}>
+                            <Form className="form" onSubmit={handleSubmit} style={{ marginBottom: '20px' }}>
+                                <Form.Group controlId="formName">
+                                    <Form.Label>Name</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        name="name"
+                                        value={inputs.name || ""}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group controlId="formDate">
+                                    <Form.Label>Date</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="date"
+                                        name="date"
+                                        value={inputs.date || ""}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                <Form.Group controlId="formLocation">
+                                    <Form.Label>Location</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        name="location"
+                                        value={inputs.location}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        {enumLocationList.map((item) => (
+                                            <option key={item.value} value={item.value}>{item.label}</option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="formType">
+                                    <Form.Label>Type</Form.Label>
+                                    <Form.Control
+                                        as="select"
+                                        name="type"
+                                        value={inputs.type}
+                                        onChange={handleChange}
+                                        required
+                                    >
+                                        {enumTypeList.map((item) => (
+                                            <option key={item.value} value={item.value}>{item.label}</option>
+                                        ))}
+                                    </Form.Control>
+                                </Form.Group>
+                                <Form.Group controlId="formNotes">
+                                    <Form.Label>Notes</Form.Label>
+                                    <Form.Control
+                                        required
+                                        type="text"
+                                        name="notes"
+                                        value={inputs.notes || ""}
+                                        onChange={handleChange}
+                                    />
+                                </Form.Group>
+                                {Object(data).status == null || Object(data).status === "Open" ?
+                                    <Button variant="primary" type="submit">Update</Button>
+                                    : (<Alert variant="danger" className="text-center">אירוע זה סגור.</Alert>)
+                                }
+                                {query_eventid ?
+                                    <Button variant="primary" size="lg" onClick={() => navigate(`/selectAMeal?eventid=${query_eventid}`)} >Next Page</Button>
+                                    : <></>
+                                }
+                                <p>[MESSAGE] {message}</p>
+                                {process.env.REACT_APP_TESTING === 'TRUE' && (
+                                    <>
+                                        <h5>Testing Mode</h5>
+                                        <p>[STATUS] {status}</p>
+                                        <p>[JSON] {JSON.stringify(data)}</p>
+                                    </>
+                                )}
+                            </Form>
+                        </Col>
+                    </Row>
+                </Container>
             </MainContent>
         </div>
     );

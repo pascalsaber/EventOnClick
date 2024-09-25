@@ -1,0 +1,261 @@
+[{
+  "_id": {
+    "$oid": "66d9e91938fce19c2f876cdb"
+  },
+  "name": "White Rice with Chicken",
+  "category": "Second Meal",
+  "price": 65,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e9cf119fffd5ad599f9972"
+  },
+  "name": "White Rice with Meat",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66e9cf289fffd5ad599f9975"
+  },
+  "name": "White rice with fish",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66eedb18abe379c0ee7f3f4a"
+  },
+  "name": "Tofu",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66eedbc7abe379c0ee7f3f4b"
+  },
+  "name": "Pasta",
+  "category": "Second Meal",
+  "price": 25,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66eeee1cabe379c0ee7f3f4d"
+  },
+  "name": "Tabula",
+  "category": "Salad",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f0298c27915309f9e47fdf"
+  },
+  "name": "Round",
+  "category": "Table",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3d9cc620f031d80fb0d19"
+  },
+  "name": "Stuffed Mushrooms",
+  "category": "First Meal",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3da18620f031d80fb0d1c"
+  },
+  "name": "Mini Quiches",
+  "category": "First Meal",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3db9b620f031d80fb0d21"
+  },
+  "name": "Bruschetta",
+  "category": "First Meal",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3dcf1620f031d80fb0d24"
+  },
+  "name": "Crispy Potatoes with Sweet Chili Sauce",
+  "category": "First Meal",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3e355620f031d80fb0d29"
+  },
+  "name": "Soup",
+  "category": "First Meal",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3e511620f031d80fb0d2c"
+  },
+  "name": "White rice with schnitzel",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3e52d620f031d80fb0d2f"
+  },
+  "name": "Grilled Chicken",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3e557620f031d80fb0d32"
+  },
+  "name": "Beef Stroganoff",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3ea7d620f031d80fb0d35"
+  },
+  "name": "Vegetarian Lasagna",
+  "category": "Second Meal",
+  "price": 80,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eaad620f031d80fb0d38"
+  },
+  "name": "Caesar Salad",
+  "category": "Salad",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eabf620f031d80fb0d3b"
+  },
+  "name": "Greek Salad",
+  "category": "Salad",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eac9620f031d80fb0d3e"
+  },
+  "name": "Quinoa Salad",
+  "category": "Salad",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eae1620f031d80fb0d41"
+  },
+  "name": "Round Table",
+  "category": "Table",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eaed620f031d80fb0d44"
+  },
+  "name": "Rectangular Table",
+  "category": "Table",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb00620f031d80fb0d47"
+  },
+  "name": "High Cocktail Table",
+  "category": "Table",
+  "price": 30,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb2f620f031d80fb0d4c"
+  },
+  "name": "White Tablecloth",
+  "category": "Map",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb3e620f031d80fb0d4f"
+  },
+  "name": "Blue Tablecloth",
+  "category": "Map",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb49620f031d80fb0d52"
+  },
+  "name": "Gold Tablecloth",
+  "category": "Map",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb65620f031d80fb0d55"
+  },
+  "name": "Candles",
+  "category": "Extra1",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3eb79620f031d80fb0d58"
+  },
+  "name": "Decorative Flowers",
+  "category": "Extra1",
+  "price": 20,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3f408620f031d80fb0d5b"
+  },
+  "name": "Flower Path",
+  "category": "Extra1",
+  "price": 50,
+  "__v": 0
+},
+{
+  "_id": {
+    "$oid": "66f3f5d3620f031d80fb0d5e"
+  },
+  "name": "Welcome Signs",
+  "category": "Extra1",
+  "price": 50,
+  "__v": 0
+}]

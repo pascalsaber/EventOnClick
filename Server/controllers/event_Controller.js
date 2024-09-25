@@ -45,24 +45,23 @@ exports.returnEnumListByType = async (request, result) => {
     }
 }
 
-exports.allEvents =[authenticateToken, async (request, result) => {
+exports.allEvents = [authenticateToken, async (request, result) => {
     try {
-        // אם קיים המשתמש
-        // של המשתמש ID-מחפש את כל האירועים במסד הנתונים שקשורים ל
-        const allEvents = await Event.find({ userID: request.userData._id });
-        // אם לא נמצאו אירועים, מחזיר הודעת שגיאה עם סטטוס (לא מורשה)
+        let allEvents;
+        if (request.query.Admin == "1" && request.userData.status == 1)
+            allEvents = await Event.find();
+        else
+            allEvents = await Event.find({ userID: request.userData._id });
         if (allEvents.length == 0) {
             return result.status(400).send('No events in the database.'); //throw new Error
         }
-        // Handle the verified data (e.g., user ID)
-        // שולח את כל האירועים שנמצאו חזרה ללקוח
         result.send(allEvents);
     } catch (error) {
         result.status(500).send(error.message);
     }
 }];
-exports.findOneEvent =[authenticateToken, async (request, result) => {
-    try { 
+exports.findOneEvent = [authenticateToken, async (request, result) => {
+    try {
         // חיפוש המשתמש במסד הנתונים לפי ה-ID שהתקבל מהטוקן
         const user = await User.findById(request.userData._id);
         if (!user) {
@@ -74,9 +73,10 @@ exports.findOneEvent =[authenticateToken, async (request, result) => {
             return result.status(400).send('Event not found.');
         }
         // בדיקה אם האירוע שייך למשתמש
-        if (event.userID.toString() !== request.userData._id.toString()) {
-            return result.status(403).send('Event does not belong to the user.');
-        }
+        if (request.userData.status != 1)
+            if (event.userID.toString() !== request.userData._id.toString()) {
+                return result.status(403).send('אירוע זה אינו שייך למשתמש המחובר.');
+            }
         // החזרת פרטי האירוע
         result.send(event);
     } catch (error) {
@@ -90,13 +90,15 @@ exports.updateEventByID = [authenticateToken, async (request, result) => {
     let event = await Event.findById({ _id: request.query.eventid }); //חיפוש אירוע לפי מפתח
     if (!event) //לא נמצא אירוע
         return result.status(400).send('No such Event ID in the database.'); //throw new Error
+    if (event.status != "Open")
+        return result.status(400).send('Event is Closed.');
+    if (request.userData.status != 1)
+        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
-    if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-        return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
-        
     today.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך הנוכחי
     eventDate.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך שהוזן
-        // בדיקה אם התאריך שהוזן הוא תאריך עתידי
+    // בדיקה אם התאריך שהוזן הוא תאריך עתידי
     if (eventDate <= today) {
         return result.status(400).send('התאריך חייב להיות תאריך עתידי');
     }
@@ -118,9 +120,11 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
         let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
             return result.status(400).send('No such Event ID in the database.'); //throw new Error
-
-        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+        if (event.status != "Open")
+            return result.status(400).send('Event is Closed.');
+        if (request.userData.status != 1)
+            if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+                return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
         const data = await JSON.parse(request.body.data);
         console.log(JSON.stringify(data)); //TEST
@@ -163,18 +167,26 @@ exports.updatePayment = [authenticateToken, async (request, result) => {
         let event = await Event.findById({ _id: request.body.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
             return result.status(400).send('No such Event ID in the database.'); //throw new Error
-
-        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+        if (event.status != "Open")
+            return result.status(400).send('Event is Closed.');
+        if (request.userData.status != 1)
+            if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+                return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
         const data = await JSON.parse(request.body.data);
-
-        // return result.status(400).send(data.payments); //throw new Error 
-
+        if (data.payments.totalCost <= 0)
+            return result.status(400).send("חובה לעדכן את התפריט הארוחות ועיצוב, לא ניתן לסגור אירוע בסכום של 0 שקלים.");
+        const expiryDate = new Date(data.payments.expiryDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך הנוכחי
+        expiryDate.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך שהוזן
+        if (expiryDate <= today) {
+            return result.status(400).send('כרטיס זה אינו בתוקף ')
+        }
         let progress = null;
         if (data.payments != null) {
             progress = await Event.findByIdAndUpdate(
                 event._id, // ID של האירוע לעדכון
-                { payments: data.payments },
+                { status: data.status, payments: data.payments },
                 { new: true } // מחזיר את המסמך המעודכן
             );
         }
@@ -192,9 +204,11 @@ exports.deleteEvent = [authenticateToken, async (request, result) => {
         let event = await Event.findById({ _id: request.query.eventID }); //חיפוש אירוע לפי מפתח
         if (!event) //לא נמצא אירוע
             return result.status(400).send('No such Event ID in the database.'); //throw new Error
-
-        if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
-            return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
+        if (event.status != "Open")
+            return result.status(400).send('Event is Closed.');
+        if (request.userData.status != 1)
+            if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
+                return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
         await Event.deleteOne(event._id);
         result.send("Event has been deleted.");
