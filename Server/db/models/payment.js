@@ -15,8 +15,7 @@ const PaymentSchema = new Schema({
     cardHolderID: {//תעודת_זהות_בעל_הכרטיס
         type: Number,
         trim: true,//משמשת להסרת רווחים מיותרים בתחילת ובסוף המחרוזת לפני שמירתה
-        required: true,
-        maxlength: 3 // הגבלת מספר התווים ל-3
+        required: true,  
     },
     expiryDate: {//תאריך_תפוגה
         type: Date,
@@ -26,6 +25,7 @@ const PaymentSchema = new Schema({
         type: Number,
         trim: true,//משמשת להסרת רווחים מיותרים בתחילת ובסוף המחרוזת לפני שמירתה
         required: true,
+        maxlength: 3 // הגבלת מספר התווים ל-3
     },
     totalCost: {// עלות_כוללת
         type: Number,

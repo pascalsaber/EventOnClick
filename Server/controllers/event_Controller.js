@@ -7,6 +7,14 @@ const authenticateToken = require("./auth");
 // 
 exports.add = [authenticateToken, async (request, result) => {
     try {
+        const eventDate = new Date(request.body.date);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך הנוכחי
+        eventDate.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך שהוזן
+        // בדיקה אם התאריך שהוזן הוא תאריך עתידי
+        if (eventDate <= today) {
+            return result.status(400).send('התאריך חייב להיות תאריך עתידי');
+        }
         const validDate = await Event.findOne({ date: request.body.date });
         if (validDate)
             return result.status(400).send('התאריך כבר קיים במסד הנתונים'); //throw new Error
@@ -77,18 +85,26 @@ exports.findOneEvent =[authenticateToken, async (request, result) => {
 }];
 
 exports.updateEventByID = [authenticateToken, async (request, result) => {
+    const eventDate = new Date(request.body.date);
+    const today = new Date();
     let event = await Event.findById({ _id: request.query.eventid }); //חיפוש אירוע לפי מפתח
     if (!event) //לא נמצא אירוע
         return result.status(400).send('No such Event ID in the database.'); //throw new Error
 
     if (event.userID.toString() != request.userData._id.toString()) // המפתח של המשתמש המחובר למערכת אינו תואם לאירוע
         return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
-
+        
+    today.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך הנוכחי
+    eventDate.setHours(0, 0, 0, 0); // איפוס השעות, הדקות ,השניות ואלפית של התאריך שהוזן
+        // בדיקה אם התאריך שהוזן הוא תאריך עתידי
+    if (eventDate <= today) {
+        return result.status(400).send('התאריך חייב להיות תאריך עתידי');
+    }
     const validDate = await Event.findOne({ date: request.body.date });
     if (validDate)
         return result.status(400).send('התאריך כבר קיים במסד הנתונים'); //throw new Error
-
     const data = request.body;
+    // עיבוד התאריך לפני שליחת התשובה
     let progress = await Event.findByIdAndUpdate(
         request.query.eventid, // ID של האירוע לעדכון
         data,

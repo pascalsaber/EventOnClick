@@ -39,6 +39,8 @@ function AddEvent() {
                 setData(fetchData.data);
 
                 setInputs(fetchData.data);
+                const formattedDate = fetchData.data.date.split('T')[0]; 
+                setInputs(values => ({ ...values, ["date"]: formattedDate }))
             } catch (error) {
                 console.error(`[Error] ${error}`);
             }
@@ -76,6 +78,7 @@ function AddEvent() {
     const handleChange = (event) => {
         const name = event.target.name;
         const value = event.target.value;
+        
         setInputs(values => ({ ...values, [name]: value })) //input["id"] = "9snahdf8ui4hi34uh5"
     }
 
@@ -100,6 +103,7 @@ function AddEvent() {
             setStatus(fetchData.status);
             setMessage(fetchData.message);
             setData(fetchData.data);
+            console.log('DATE:'+ fetchData.data.date)
 
             setquery_eventid(fetchData.data._id)
             //פונקציה זו מעבירה לניתוב הבא במקרה שלנו לשלב שני שהוא יצירת תפריט לאירוע
