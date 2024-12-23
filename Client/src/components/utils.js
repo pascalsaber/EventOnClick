@@ -10,7 +10,7 @@ export async function checkLogin(navigate, token) {
                 'Authorization': `Bearer ${token}`// שיטת ההצפנה 
             }
         });// בדיקה אם לאותו משתמש הטוקן פג תוקף 
-        if (response.status == 401)
+        if (response.status !== 200)
             return navigate("/logoff");
     } catch (error) {
         console.error(error);

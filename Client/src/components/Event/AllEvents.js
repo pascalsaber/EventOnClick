@@ -74,10 +74,7 @@ function AllEvents() {
                                                 <Button
                                                     variant="primary"
                                                     size="sm"
-                                                    onClick={() => navigate(`/addEvent?eventid=${item._id}`)}
-                                                >
-                                                    Edit
-                                                </Button>
+                                                    onClick={() => navigate(`/addEvent?eventid=${item._id}`)}>Edit</Button>
                                             </td>
                                             <td>{item.name}</td>
                                             <td>{item.date}</td>

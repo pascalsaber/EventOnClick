@@ -47,8 +47,8 @@ const userSchema = new Schema({
                 throw new Error(`Invalid email format: ${value}`);
         }
     },
-    // משתמש רגיל יקבל סטטוס 1
-    // משתמש מנהל יקבל סטטוס 0
+    // משתמש רגיל יקבל סטטוס 0
+    // משתמש מנהל יקבל סטטוס 1
     status: {
         type: Number,
         trim: true,
@@ -64,7 +64,6 @@ userSchema.methods.generateToken = async function () {
         signInTime: Date.now(),
         _id: this._id,
         username: this.username
-
     }
     const token = jwt.sign(data, process.env.GLOBAL_TOKEN_SECRET, { expiresIn: '1 hour' }); //1800s - 30 minutes
     //user.tokens.push({ token }); //הוספה למערך במקום האחרון

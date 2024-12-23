@@ -4,9 +4,15 @@ const User = require('../db/models/user'); // Adjust the path as needed
 const authenticateToken = async (request, result, next) => {
     try {
         const token = request.headers.authorization.split(' ')[1]; // Extract token from header
-         //GLOBAL_TOKEN_SECRET מפענחת ומאמתת את הטוקן באמצעות המפתח הסודי שנמצא במשתנה הסביבה
+        //GLOBAL_TOKEN_SECRET מפענחת ומאמתת את הטוקן באמצעות המפתח הסודי שנמצא במשתנה הסביבה
         const decoded = jwt.verify(token, process.env.GLOBAL_TOKEN_SECRET); // Verify token
-         // חיפוש המשתמש במסד הנתונים לפי ה-אידי ושמירה 
+        /*
+            let data = {
+            signInTime: Date.now(),
+            _id: this._id,
+            username: this.username }
+        */
+        // חיפוש המשתמש במסד הנתונים לפי ה-אידי ושמירה 
         const userData = await User.findOne({ _id: decoded._id }); // Find user by ID
         if (!userData) {
             return result.status(400).send('No such ID in the database.'); // Send 401 if no user found

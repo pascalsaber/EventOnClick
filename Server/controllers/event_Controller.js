@@ -127,7 +127,7 @@ exports.updateMealsOrDecoration = [authenticateToken, async (request, result) =>
                 return result.status(400).send('אירוע זה אינו שייך למשתמש המחובר.'); //throw new Error
 
         const data = await JSON.parse(request.body.data);
-        console.log(JSON.stringify(data)); //TEST
+        //console.log(JSON.stringify(data)); //TEST
         let formData = null //Meal || Decoration
         if (data.meals != null) {
             formData = data.meals;
